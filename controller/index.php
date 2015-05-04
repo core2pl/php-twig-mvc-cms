@@ -1,6 +1,9 @@
 <?php
 namespace controler\Index;
 
+require_once 'base.php';
+require_once 'view/index.php';
+
 use controler\BaseController;
 use model\Test\TestModel;
 use view\Index\IndexView;

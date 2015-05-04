@@ -1,6 +1,8 @@
 <?php
+include 'model/test.php';
+include 'controller/index.php';
+
 use controler\Index\IndexController;
-use model\Test\TestModel;
 
 $controller = new IndexController();
 
