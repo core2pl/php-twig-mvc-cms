@@ -17,8 +17,8 @@ class IndexView extends BaseView {
 	
 	function render() {
 		print_r($this->models);
-		echo $twig->render('Index.html.twig', array(
-				'text' => $models[0]->get()
+		echo $this->twig->render('Index.html.twig', array(
+				'text' => $this->models[0]->get()
 		));
 	}
 	
