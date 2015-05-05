@@ -17,7 +17,7 @@ class IndexView extends BaseView {
 	function render() {
 		require_once 'Twig/Autoloader.php';
 		Twig_Autoloader::register();
-		$loader = new Twig_Loader_Filesystem('template');
+		$loader = new Twig_Loader_Filesystem('Template');
 		$twig = new Twig_Environment($loader);
 		echo $twig->render('Index.html.twig', array(
 				'text' => $models[0]->render()

@@ -20,6 +20,7 @@ class IndexController extends BaseController{
 		
 		$view = new IndexView();
 		$view->add_model($test_model);
+		$this->views[] = $view;
 		
 	}
 	
