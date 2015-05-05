@@ -11,6 +11,7 @@ use View\IndexView;
 class IndexController extends BaseController{
 
 	private $views;
+	private $twig;
 	
 	public function __construct() {
 		$this->views = array();
@@ -20,6 +21,7 @@ class IndexController extends BaseController{
 		
 		$view = new IndexView();
 		$view->add_model($test_model);
+		$view->add_twig($twig);
 		$this->views[] = $view;
 		
 	}
@@ -28,5 +30,9 @@ class IndexController extends BaseController{
 		foreach ($this->views as $view) {
 			$view->render();
 		}
+	}
+	
+	public function add_twig($twig) {
+		$this->twig = $twig;
 	}
 }

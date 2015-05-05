@@ -9,18 +9,20 @@ use Model\TestModel;
 class IndexView extends BaseView {
 
 	private $models;
+	private $twig;
 	
 	public function add_model(TestModel $model) {
 		$this->models[] = $model;
 	}
 	
 	function render() {
-		require_once 'Twig/Autoloader.php';
-		Twig_Autoloader::register();
-		$loader = new Twig_Loader_Filesystem('Template');
-		$twig = new Twig_Environment($loader);
+		print_r($this->models);
 		echo $twig->render('Index.html.twig', array(
-				'text' => $models[0]->render()
+				'text' => $models[0]->get()
 		));
+	}
+	
+	public function add_twig($twig) {
+		$this->twig = $twig;
 	}
 }
