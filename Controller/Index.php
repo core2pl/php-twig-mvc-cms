@@ -1,12 +1,12 @@
 <?php
-namespace controler\Index;
+namespace Controler;
 
-require_once 'base.php';
-require_once 'view/index.php';
+require_once 'Base.php';
+require_once 'View/Index.php';
 
-use controler\BaseController;
-use model\Test\TestModel;
-use view\Index\IndexView;
+use Controler\BaseController;
+use Model\TestModel;
+use View\IndexView;
 
 class IndexController extends BaseController{
 

@@ -1,9 +1,9 @@
 <?php
-namespace model\Test;
+namespace Model;
 
-require_once 'base.php';
+require_once 'Base.php';
 
-use model\BaseModel;
+use Model\BaseModel;
 
 class TestModel extends BaseModel {
 	

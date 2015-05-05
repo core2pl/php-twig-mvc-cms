@@ -1,5 +1,5 @@
 <?php
-namespace controler;
+namespace Controler;
 
 abstract class BaseController {
 	
