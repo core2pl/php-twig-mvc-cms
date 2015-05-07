@@ -11,4 +11,4 @@ $twig = new Twig_Environment($loader);
 
 $controller = new Index();
 $controller->add_twig($twig);
-$controller->render();
+$controller->main();

@@ -2,31 +2,35 @@
 namespace Controler;
 
 require_once 'Base.php';
-require_once 'View/Index.php';
 
 use Controler\Base;
-use Model\Test;
-use View\Index;
+use Model\Test as M_Test;
+use Model\Model;
 
 class Index extends Base {
 
-	private $views;
+	private $models;
 	private $twig;
 	
 	public function __construct() {
-		$this->views = array();
+		$this->model = array();
+	}
+	
+	public function main() {
+		$this->render();
 	}
 	
 	public function render() {
-		$test_model = new Test();
+		$test_model = new M_Test("text");
 		$test_model->read();
 		
-		$view = new Model\Index();
-		$view->add_model($test_model);
-		$view->add_twig($this->twig);
-		$this->views[] = $view;
-		foreach ($this->views as $view) {
-			$view->render();
+		$this->models[] = $test_model;
+		
+		$render = array();
+		foreach ($this->models as $model) {
+			echo $this->twig->render('Index.html.twig', array(
+					$model->getName() => $model->getData()
+			));
 		}
 	}
 	
