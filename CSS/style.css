@@ -1,1 +1,178 @@
-@CHARSET "UTF-8";
+body {
+	font-family: Arial;
+    background: url("background.jpg") no-repeat center center fixed;
+}
+
+#page {
+	margin-left: 10%;
+	margin-right: 10%;
+}
+
+#header {
+	width: calc(90% + 10px);
+	margin: 5px;
+	
+}
+
+.header_block {
+	background-color: rgba(255,255,255,0.8);
+	box-shadow: 3px 3px 10px #444444;
+	margin-bottom: 15px;
+}
+
+.header_menu_block {
+	padding: 5px;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.header_menu_block:hover {
+	background-color: rgba(53,84,151,0.8);
+	color: #6091f8;
+}
+
+#menu_bottom {
+	width: calc(90% + 10px);
+	margin: 5px;
+	
+}
+
+.bottom_block {
+	background-color: rgba(255,255,255,0.8);
+	box-shadow: 3px 3px 10px #444444;
+	margin-bottom: 15px;
+}
+
+.bottom_menu_block {
+	padding: 5px;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.bottom_menu_block:hover {
+	background-color: rgba(53,84,151,0.8);
+	color: #6091f8;
+}
+
+#menu {
+	width: 10%;
+	margin: 5px;
+	float:left;
+}
+
+.menu_block {
+	min-height:50px;
+	background-color: rgba(255,255,255,0.8);
+	padding: 5px;
+	box-shadow: 3px 3px 10px #444444;
+	margin-bottom: 15px;
+}
+
+#main_page { 
+	width: 80%;
+	margin: 5px;
+	float: left;
+}
+
+.page_block {
+	min-height:150px;
+	box-shadow: 3px 3px 10px #444444;
+	background-color: rgba(255,255,255,0.8);
+	word-break: break-all;
+	padding: 10px;
+	margin-bottom: 15px;
+}
+
+.post_author {
+	float: left;
+}
+
+.post_date {
+	float: right;
+}
+
+.post_title {
+	text-align:center;
+}
+
+.post_footer {
+	text-align: right;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:link {
+	color: #3B5998;
+}
+
+a:visited {
+	color: #3B5998;
+}
+
+a:hover {
+	color: #6091f8;
+}
+
+form input[type=text] {
+	background-color:#e3f1ff;
+	padding: 2px;
+	border-width: 1px
+}
+
+form input[type=password] {
+	background-color:#e3f1ff;
+	padding: 2px;
+	border-width: 1px
+}
+
+form textarea {
+	background-color:#e3f1ff;
+	padding: 2px;
+	border-width: 1px
+}
+
+.post_title_edit {
+	width: 500px;
+}
+
+.post_text_edit {
+	width: 100%;
+	height: 200px;
+}
+
+#comments {
+	
+}
+
+.comment {
+	
+}
+
+.com_author {
+	font-size:14px;
+	float: left;
+}
+
+.com_date {
+	font-size:14px;
+	float: right;
+}
+
+.com_text {
+	margin-bottom: 10px;
+	padding: 10px;
+	background-color: rgba(255,255,255,0.6);
+	border: 1px solid #ffffff;
+	border-radius: 10px;
+}
+
+.com_text_edit {
+	width: 100%;
+	height: 100px;
+}
+
+.com_footer {
+	text-align: right;
+}
