@@ -4,11 +4,11 @@ namespace Controler;
 require_once 'Base.php';
 require_once 'View/Index.php';
 
-use Controler\BaseController;
-use Model\TestModel;
-use View\IndexView;
+use Controler\Base;
+use Model\Test;
+use View\Index;
 
-class IndexController extends BaseController{
+class Index extends Base {
 
 	private $views;
 	private $twig;
@@ -18,10 +18,10 @@ class IndexController extends BaseController{
 	}
 	
 	public function render() {
-		$test_model = new TestModel();
+		$test_model = new Test();
 		$test_model->read();
 		
-		$view = new IndexView();
+		$view = new Model\Index();
 		$view->add_model($test_model);
 		$view->add_twig($this->twig);
 		$this->views[] = $view;

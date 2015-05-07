@@ -1,11 +1,11 @@
 <?php
 namespace View;
 
-use Model\TestModel;
+use Model\Test;
 
-abstract class BaseView {
+abstract class Base {
 	
-	abstract public function add_model(TestModel $model);
+	abstract public function add_model(Model\Test $model);
 	
 	abstract function render();
 }

@@ -3,10 +3,10 @@ namespace View;
 
 require_once 'View/Base.php';
 
-use View\BaseView;
-use Model\TestModel;
+use View\Base;
+use Model\Test;
 
-class IndexView extends BaseView {
+class IndexView extends View\Base {
 
 	private $models;
 	private $twig;

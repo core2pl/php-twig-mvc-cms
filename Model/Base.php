@@ -1,7 +1,7 @@
 <?php
 namespace Model;
 
-abstract class BaseModel {
+abstract class Base {
 	
 	abstract function read();
 	
