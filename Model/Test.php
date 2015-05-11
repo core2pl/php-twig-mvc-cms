@@ -15,7 +15,7 @@ class Test extends Base {
 		$this->name = $name;
 	}
 	
-	public function read() {
+	public function Read() {
 		$this->test_message = "witaj!";
 	}
 	
