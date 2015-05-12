@@ -3,7 +3,7 @@ namespace Model;
 
 use Model\Base;
 
-class PDO {
+class PDO extends Base {
 	
 	private $name;
 	private $dbcon;

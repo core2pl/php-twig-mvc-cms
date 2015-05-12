@@ -3,7 +3,13 @@
 <link rel="stylesheet" type="text/css" href="CSS/style.css" />
 {% endblock %}
 {% block title %}
+{{ title }}
 {% endblock %}
 {% block header %}
-{{ text }}
+
+<div class="header_block" style="text-align: right;">{{ text }}</div>
 {% endblock %}
+{% block menu_left %}a{% endblock %}
+{% block page %}b{% endblock %}
+{% block menu_right %}c{% endblock %}
+{% block footer %}d{% endblock %}
