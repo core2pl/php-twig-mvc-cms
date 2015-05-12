@@ -33,7 +33,7 @@ class PDO {
 			if(!empty($fetch)) {
 				return $fetch;
 			} else {
-				return Array();
+				return false;
 			}
 		} catch(PDOException $e) {
 			return "B³¹d: " . $e->getMessage();
@@ -48,7 +48,60 @@ class PDO {
 			if(!empty($fetch)) {
 				return $fetch;
 			} else {
-				return Array();
+				return false;
+			}
+		} catch(PDOException $e) {
+			return "B³¹d: " . $e->getMessage();
+		}
+	}
+	
+	
+	public function createPost() {
+		try {
+			$query = $this->dbcon->prepare("INSERT INTO $prefix"."_news (id, title, text, type, date, author) VALUES (NULL, :title, :text, \"post\", NOW(), :author);");
+			$query->bindValue(":title",$_POST['title']);
+			$query->bindValue(":text",$_POST['text']);
+			$query->bindValue(":author",$_SESSION['id']);
+			$query->execute();
+			$fetch=$query->rowCount();
+			if($fetch==1) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch(PDOException $e) {
+			return "B³¹d: " . $e->getMessage();
+		}
+	}
+	
+	public function editPost() {
+		try {
+			$query = $this->dbcon->prepare("UPDATE $prefix"."_news SET title = :newtitle,text = :newtext, date = Now() WHERE id = :id");
+			$query->bindValue(":newtitle",$_POST['title']);
+			$query->bindValue(":newtext",$_POST['text']);
+			$query->bindValue(":id",$_GET['id']);
+			$query->execute();
+			$fetch=$query->rowCount();
+			if($fetch==1) {
+				return  true;
+			} else {
+				return false;
+			}
+		} catch(PDOException $e) {
+			return "B³¹d: " . $e->getMessage();
+		}
+	}
+	
+	public function removePost() {
+		try {
+			$query = $this->dbcon->prepare("DELETE FROM $prefix"."_news WHERE id = :id");
+			$query->bindValue(":id",$_GET['id']);
+			$query->execute();
+			$fetch=$query->rowCount();
+			if($fetch==1) {
+				return  true;
+			} else {
+				return false;
 			}
 		} catch(PDOException $e) {
 			return "B³¹d: " . $e->getMessage();
@@ -63,41 +116,7 @@ class PDO {
 			if(!empty($fetch)) {
 				return $fetch;
 			} else {
-				return Array();
-			}
-		} catch(PDOException $e) {
-			return "B³¹d: " . $e->getMessage();
-		}
-	}
-	
-	public function createPost() {
-		try {
-			$query = $this->dbcon->prepare("INSERT INTO $prefix"."_news (id, title, text, type, date, author) VALUES (NULL, :title, :text, \"post\", NOW(), :author);");
-			$query->bindValue(":title",$_POST['title']);
-			$query->bindValue(":text",$_POST['text']);
-			$query->bindValue(":author",$_SESSION['id']);
-			$query->execute();
-			$fetch=$query->rowCount();
-			if($fetch==1) {
-				return "<script> location.replace(\"?action=show&order=date\"); </script>";
-			} else {
-				return "Wyst¹pi³ b³¹d</br><input type=\"button\" value=\"Wróæ\" onclick=\"history.back(-1)\"/>";
-			}
-		} catch(PDOException $e) {
-			return "B³¹d: " . $e->getMessage();
-		}
-	}
-	
-	public function removePost() {
-		try {
-			$query = $this->dbcon->prepare("DELETE FROM $prefix"."_news WHERE id = :id");
-			$query->bindValue(":id",$_GET['id']);
-			$query->execute();
-			$fetch=$query->rowCount();
-			if($fetch==1) {
-				return  "<script> location.replace(\"?action=show&order=date\"); </script>";
-			} else {
-				return "Wyst¹pi³ b³¹d</br><input type=\"button\" value=\"Wróæ\" onclick=\"history.back(-1)\"/>";
+				return false;
 			}
 		} catch(PDOException $e) {
 			return "B³¹d: " . $e->getMessage();
@@ -106,17 +125,32 @@ class PDO {
 	
 	public function createComment() {
 		try {
-			$query = $dbcon->prepare("INSERT INTO $prefix"."_comments (id, text, author, post, date) VALUES (NULL, :text, :author, :post, NOW());");
+			$query = $this->dbcon->prepare("INSERT INTO $prefix"."_comments (id, text, author, post, date) VALUES (NULL, :text, :author, :post, NOW());");
 			$query->bindValue(":text",$_POST['text']);
 			$query->bindValue(":post",$_POST['id']);
 			$query->bindValue(":author",$_SESSION['id']);
 			$query->execute();
 			$fetch=$query->rowCount();
-			$dbcon = null;
 			if($fetch==1) {
-				return "<script> window.history.back(-1); </script>";
+				return true;
 			} else {
-				return "Wyst¹pi³ b³¹d</br><input type=\"button\" value=\"Wróæ\" onclick=\"history.back(-1)\"/>";
+				return false;
+			}
+		} catch(PDOException $e) {
+			return "B³¹d: " . $e->getMessage();
+		}
+	}
+	
+	public function removeComment() {
+		try {
+			$query = $this->dbcon->prepare("DELETE FROM $prefix"."_comments WHERE id = :id");
+			$query->bindValue(":id",$_GET['com_id']);
+			$query->execute();
+			$fetch=$query->rowCount();
+			if($fetch==1) {
+				return  header("Location: ?action=show&only=".$_GET['only']);
+			} else {
+				return false;
 			}
 		} catch(PDOException $e) {
 			return "B³¹d: " . $e->getMessage();
