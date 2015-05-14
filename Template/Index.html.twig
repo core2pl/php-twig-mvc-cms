@@ -6,8 +6,11 @@
 {{ title }}
 {% endblock %}
 {% block header %}
-
-<div class="header_block" style="text-align: right;">{{ text }}</div>
+{% if login_panel.logged %}
+<div class="header_block" style="text-align: right;"><a href="{{ login_panel.user_panel }}">{{ login_panel.user }}</a> <a href="{{ login_panel.logout }}">Wyloguj</a></div>
+{% else %}
+<div class="header_block" style="text-align: right;"><a href="{{ login_panel.register }}">Zarejstruj siê</a> <a href="{{ login_panel.login }}">Zaloguj siê</a></div>
+{% endif %}
 {% endblock %}
 {% block menu_left %}a{% endblock %}
 {% block page %}b{% endblock %}
