@@ -1,15 +1,16 @@
 {% extends "Base.html.twig" %}
 {% block head %}
+{{ parent() }}
 <link rel="stylesheet" type="text/css" href="CSS/style.css" />
-{% endblock %}
 {% block title %}
-{{ title }}
+{{ text }}
+{% endblock %}
 {% endblock %}
 {% block header %}
 {% if login_panel.logged %}
 <div class="header_block" style="text-align: right;"><a href="{{ login_panel.user_panel }}">{{ login_panel.user }}</a> <a href="{{ login_panel.logout }}">Wyloguj</a></div>
 {% else %}
-<div class="header_block" style="text-align: right;"><a href="{{ login_panel.register }}">Zarejstruj siê</a> <a href="{{ login_panel.login }}">Zaloguj siê</a></div>
+<div class="header_block" style="text-align: right;"><a href="{{ login_panel.register }}">Zarejstruj siÄ™</a> <a href="{{ login_panel.login }}">Zaloguj siÄ™</a></div>
 {% endif %}
 {% endblock %}
 {% block menu_left %}a{% endblock %}

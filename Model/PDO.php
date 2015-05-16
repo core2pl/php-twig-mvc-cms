@@ -17,7 +17,7 @@ class PDO extends Base {
 			$this->dbcon = new PDO("mysql:host=$server;dbname=$database", MYSQL_LOGIN, MYSQL_PASSWORD);
 			$this->dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch(PDOException $e) {
-			return "B³¹d: " . $e->getMessage();
+			return "BÅ‚Ä…d: " . $e->getMessage();
 		}
 	}
 	
@@ -36,7 +36,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B³¹d: " . $e->getMessage();
+			return "Bï¿½ï¿½d: " . $e->getMessage();
 		}
 	}
 	
@@ -51,7 +51,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B³¹d: " . $e->getMessage();
+			return "Bï¿½ï¿½d: " . $e->getMessage();
 		}
 	}
 	
@@ -70,7 +70,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B³¹d: " . $e->getMessage();
+			return "Bï¿½ï¿½d: " . $e->getMessage();
 		}
 	}
 	
@@ -88,7 +88,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B³¹d: " . $e->getMessage();
+			return "Bï¿½ï¿½d: " . $e->getMessage();
 		}
 	}
 	
@@ -104,7 +104,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B³¹d: " . $e->getMessage();
+			return "Bï¿½ï¿½d: " . $e->getMessage();
 		}
 	}
 	
@@ -119,7 +119,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B³¹d: " . $e->getMessage();
+			return "Bï¿½ï¿½d: " . $e->getMessage();
 		}
 	}
 	
@@ -137,7 +137,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B³¹d: " . $e->getMessage();
+			return "Bï¿½ï¿½d: " . $e->getMessage();
 		}
 	}
 	
@@ -153,7 +153,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B³¹d: " . $e->getMessage();
+			return "Bï¿½ï¿½d: " . $e->getMessage();
 		}
 	}
 	

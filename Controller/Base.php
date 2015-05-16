@@ -1,9 +1,15 @@
 <?php
-namespace Controler;
+namespace Controller;
 
-abstract class Base {
+require 'Twig/lib/Twig/Autoloader.php';
+
+class Base {
 	
-	abstract function render();
+	public $twig;
 	
-	abstract function main();
+	function twig() {
+		\Twig_Autoloader::register();
+		$loader = new \Twig_Loader_Filesystem('Template');
+		$this->twig = new \Twig_Environment($loader);
+	}
 }

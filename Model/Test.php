@@ -1,8 +1,6 @@
 <?php
 namespace Model;
 
-require_once 'Base.php';
-
 use Model\Base;
 
 class Test extends Base {

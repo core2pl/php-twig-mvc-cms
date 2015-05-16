@@ -1,14 +1,12 @@
 <?php
-require_once 'Twig/lib/Twig/Autoloader.php';
-Twig_Autoloader::register();
-include 'Model/Test.php';
-include 'Controller/Index.php';
+namespace Controller\Page;
 
-use Controler\Index;
+use Controller\Index as IndexController;
 
-$loader = new Twig_Loader_Filesystem('Template');
-$twig = new Twig_Environment($loader);
-
-$controller = new Index();
-$controller->add_twig($twig);
-$controller->main();
+class Index {
+	
+	function __construct() {
+		$ctrl = new IndexController();
+		$ctrl->main();
+	}
+}
