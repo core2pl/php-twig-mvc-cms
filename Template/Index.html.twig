@@ -13,7 +13,7 @@
 <div class="header_block" style="text-align: right;"><a href="{{ login_panel.register }}">Zarejstruj się</a> <a href="{{ login_panel.login }}">Zaloguj się</a></div>
 {% endif %}
 {% endblock %}
-{% block menu_left %}a{% endblock %}
-{% block page %}b{% endblock %}
-{% block menu_right %}c{% endblock %}
-{% block footer %}d{% endblock %}
+{% block menu_left %}<div class="menu_block">a</div>{% endblock %}
+{% block page %}<div class="page_block">b</div>{% endblock %}
+{% block menu_right %}<div class="menu_block"></div>{% endblock %}
+{% block footer %}<div class="footer_block"></div>{% endblock %}

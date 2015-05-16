@@ -10,13 +10,14 @@
 </title>
 </head>
 <body>
+<div id="page">
 <div id="header">
 {% block header %}{% endblock %}
 </div>
 <div id="menu_left">
 {% block menu_left %}{% endblock %}
 </div>
-<div id="page">
+<div id="main_page">
 {% block page %}{% endblock %}
 </div>
 <div id="menu_right">
@@ -24,6 +25,7 @@
 </div>
 <div id="footer">
 {% block footer %}{% endblock %}
+</div>
 </div>
 </body>
 </html>

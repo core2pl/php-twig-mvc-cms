@@ -14,7 +14,7 @@ class User extends Base {
 	public function __construct($name) {
 		$this->name = $name;
 		try {
-			$this->dbcon = new \PDO("mysql:host=$server;dbname=$database", MYSQL_LOGIN, MYSQL_PASSWORD);
+			$this->dbcon = new \PDO("mysql:host=$this->server;dbname=$this->database", MYSQL_LOGIN, MYSQL_PASSWORD);
 			$this->dbcon->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		} catch(\PDOException $e) {
 			echo "Błąd: " . $e->getMessage();
