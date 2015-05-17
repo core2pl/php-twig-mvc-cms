@@ -29,4 +29,9 @@ class LoginPanel extends Base {
 			return false;
 		}
 	}
+	
+	public function getName() {
+		return $this->name();	
+	}
+	
 }
