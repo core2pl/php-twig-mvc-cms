@@ -38,11 +38,11 @@
 
 {% block page %}
 	<div id="main_page">
-	{# for post in main_page #}
+	{% for post in main_page %}
 		<div class="page_block">
-		{# post.title #}
+		{{ post.title }}
 		</div>
-	{# endfor #}
+	{% endfor %}
 	</div>
 {% endblock %}
 
