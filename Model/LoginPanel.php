@@ -5,8 +5,6 @@ use Model\Base;
 
 class LoginPanel extends Base {
 	
-	private $name;
-	
 	public function getData($user) {
 		if(isset($_SESSION['id'])) {
 			$return = (object) null;
@@ -29,9 +27,5 @@ class LoginPanel extends Base {
 			return false;
 		}
 	}
-	
-	public function getName() {
-		return $this->name();	
-	}
-	
+
 }
