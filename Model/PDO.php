@@ -21,10 +21,6 @@ class PDO extends Base {
 		}
 	}
 	
-	public function getName() {
-		return $this->name;
-	}
-	
 	public function getPosts() {
 		try {
 			$query = $this->dbcon->prepare("SELECT * FROM $prefix"."_news ORDER BY date DESC");

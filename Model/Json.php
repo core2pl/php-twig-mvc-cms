@@ -9,10 +9,6 @@ class Json extends Base {
 	private $json;
 	private $fname;
 	
-	public function __construct($name) {
-		$this->name = $name;
-	}
-	
 	public function open($fname) {
 		$this->fname = $fname;
 		$this->json = unserialize(json_decode(file_get_contents($fname),true));

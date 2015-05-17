@@ -21,10 +21,6 @@ class User extends Base {
 		}
 	}
 	
-	public function getName() {
-		return $this->name;
-	}
-	
 	public function getUserName($userId) {
 		try {
 			$query = $this->dbcon->prepare("SELECT id,nick FROM ".$this->prefix."_users WHERE id = :id");

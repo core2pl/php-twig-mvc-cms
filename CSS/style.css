@@ -38,6 +38,24 @@ body {
 	float:left;
 }
 
+#menu_right {
+	width: 10%;
+	margin: 5px;
+	float:left;
+}
+
+.menu_block {
+	min-height:50px;
+	background-color: rgba(255,255,255,0.8);
+	padding: 5px;
+	box-shadow: 3px 3px 10px #444444;
+	margin-bottom: 15px;
+}
+
+.menu_header {
+	font-size: 18px;
+}
+
 #main_page { 
 	width: 80%;
 	margin: 5px;
@@ -69,20 +87,6 @@ body {
 	text-align: right;
 }
 
-#menu_right {
-	width: 10%;
-	margin: 5px;
-	float:left;
-}
-
-.menu_block {
-	min-height:50px;
-	background-color: rgba(255,255,255,0.8);
-	padding: 5px;
-	box-shadow: 3px 3px 10px #444444;
-	margin-bottom: 15px;
-}
-
 
 #footer {
 	width: calc(90% + 10px);
@@ -93,7 +97,6 @@ body {
 .footer_block {
 	background-color: rgba(255,255,255,0.8);
 	box-shadow: 3px 3px 10px #444444;
-	margin-bottom: 15px;
 }
 
 .footer_menu_block {

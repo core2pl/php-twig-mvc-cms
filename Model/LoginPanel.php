@@ -7,14 +7,6 @@ class LoginPanel extends Base {
 	
 	private $name;
 	
-	public function __construct($name) {
-		$this->name = $name;
-	}
-	
-	public function getName() {
-		return $this->name;
-	}
-	
 	public function getData($user) {
 		if(isset($_SESSION['id'])) {
 			$return = (object) null;

@@ -1,19 +1,61 @@
 {% extends "Base.html.twig" %}
+
 {% block head %}
-{{ parent() }}
-<link rel="stylesheet" type="text/css" href="CSS/style.css" />
+	{{ parent() }}
+	<link rel="stylesheet" type="text/css" href="CSS/style.css" />
 {% endblock %}
+
 {% block title %}
-{{ text }}
+	{{ text }}
 {% endblock %}
+
 {% block header %}
-{% if login_panel.logged %}
-<div class="header_block" style="text-align: right;"><a href="{{ login_panel.user_panel }}">{{ login_panel.user }}</a> <a href="{{ login_panel.logout }}">Wyloguj</a></div>
-{% else %}
-<div class="header_block" style="text-align: right;"><a href="{{ login_panel.register }}">Zarejstruj się</a> <a href="{{ login_panel.login }}">Zaloguj się</a></div>
-{% endif %}
+	<div id="header">
+	{% if login_panel.logged %}
+		<div class="header_block" style="text-align: right;"><a href="{{ login_panel.user_panel }}">{{ login_panel.user }}</a> <a href="{{ login_panel.logout }}">Wyloguj</a></div>
+	{% else %}
+		<div class="header_block" style="text-align: right;"><a href="{{ login_panel.register }}">Zarejstruj się</a> <a href="{{ login_panel.login }}">Zaloguj się</a></div>
+	{% endif %}
+	</div>
 {% endblock %}
-{% block menu_left %}<div class="menu_block">a</div>{% endblock %}
-{% block page %}<div class="page_block">b</div>{% endblock %}
-{% block menu_right %}<div class="menu_block"></div>{% endblock %}
-{% block footer %}<div class="footer_block"></div>{% endblock %}
+
+{% block menu_left %}
+	{% if menus_left %}
+		<div id="menu_left">
+		{% for menu in menus_left %}
+			<div class="menu_block">
+				<div id="menu_header">
+					{{ menu.title }}
+				</div>
+				{% for item in menu.items %}
+					<a href="{{ item.value }}">{{ item.name }}</a></br>
+				{% endfor %}
+			</div>
+		{% endfor %}
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block page %}
+	<div class="page_block">b</div>
+{% endblock %}
+
+{% block menu_right %}
+	{% if menus_right %}
+		<div id="main_page">
+		{% for menu in menus_right %}
+			<div class="menu_block"></div>
+		{% endfor %}
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block footer %}
+	{% if footer %}
+		<div id="footer">
+		<div class="footer_block">
+		{{ footer }}
+		</div>
+		</div>
+	{% endif %}
+{% endblock %}

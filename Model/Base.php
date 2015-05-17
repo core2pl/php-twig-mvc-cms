@@ -1,9 +1,13 @@
 <?php
 namespace Model;
 
-abstract class Base {
+class Base {
 	
-	abstract function __construct($name);
+	public function __construct($name) {
+		$this->name = $name;
+	}
 	
-	abstract function getName();
+	public function getName() {
+		return $this->name;
+	}
 }
