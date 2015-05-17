@@ -5,25 +5,30 @@ use Model\Base;
 
 class PDO extends Base {
 	
-	private $name;
 	private $dbcon;
+	private $server;
+	private $database;
+	private $prefix;
+	private $i = 0;
 	
 	public function __construct($name) {
 		$this->name = $name;
+		$this->i++;
+		echo $this->i;
 		try {
-			$server = MYSQL_SERVER;
-			$database = MYSQL_DATABASE;
-			$prefix = MYSQL_PREFIX;
-			$this->dbcon = new PDO("mysql:host=$server;dbname=$database", MYSQL_LOGIN, MYSQL_PASSWORD);
+			$this->server = MYSQL_SERVER;
+			$this->database = MYSQL_DATABASE;
+			$this->prefix = MYSQL_PREFIX;
+			$this->dbcon = new PDO("mysql:host=$this->server;dbname=$this->database", MYSQL_LOGIN, MYSQL_PASSWORD);
 			$this->dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch(PDOException $e) {
-			return "Błąd: " . $e->getMessage();
+			echo "Błąd: " . $e->getMessage();
 		}
 	}
 	
 	public function getPosts() {
 		try {
-			$query = $this->dbcon->prepare("SELECT * FROM $prefix"."_news ORDER BY date DESC");
+			$query = $this->dbcon->prepare("SELECT * FROM $this->prefix"."_news ORDER BY date DESC");
 			$query->execute();
 			$fetch=$query->fetchAll(PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {
@@ -32,7 +37,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B��d: " . $e->getMessage();
+			echo "Błąd: " . $e->getMessage();
 		}
 	}
 	
@@ -47,7 +52,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B��d: " . $e->getMessage();
+			return "Błąd: " . $e->getMessage();
 		}
 	}
 	
@@ -66,7 +71,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B��d: " . $e->getMessage();
+			return "Błąd: " . $e->getMessage();
 		}
 	}
 	
@@ -84,7 +89,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B��d: " . $e->getMessage();
+			return "Błąd: " . $e->getMessage();
 		}
 	}
 	
@@ -100,7 +105,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B��d: " . $e->getMessage();
+			return "Błąd: " . $e->getMessage();
 		}
 	}
 	
@@ -115,7 +120,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B��d: " . $e->getMessage();
+			return "Błąd: " . $e->getMessage();
 		}
 	}
 	
@@ -133,7 +138,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B��d: " . $e->getMessage();
+			return "Błąd: " . $e->getMessage();
 		}
 	}
 	
@@ -149,7 +154,7 @@ class PDO extends Base {
 				return false;
 			}
 		} catch(PDOException $e) {
-			return "B��d: " . $e->getMessage();
+			return "Błąd: " . $e->getMessage();
 		}
 	}
 	

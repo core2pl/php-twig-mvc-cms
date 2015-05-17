@@ -5,7 +5,6 @@ use Model\Base;
 
 class User extends Base {
 	
-	private $name;
 	private $dbcon;
 	private $server = MYSQL_SERVER;
 	private $database = MYSQL_DATABASE;

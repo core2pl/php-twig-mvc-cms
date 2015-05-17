@@ -5,7 +5,6 @@ use Model\Base;
 
 class Json extends Base {
 	
-	private $name;
 	private $json;
 	private $fname;
 	

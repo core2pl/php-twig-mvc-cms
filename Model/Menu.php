@@ -5,7 +5,6 @@ use Model\Base;
 
 class Menu extends Base {
 
-	private $name;
 	private $items;
 	
 	public function __construct($name) {
@@ -20,7 +19,7 @@ class Menu extends Base {
 		return $menu;
 	}
 	
-	public function addItem(string $name, string $value) {
+	public function addItem( $name, $value) {
 		$item = (object) null;
 		$item->name = $name;
 		$item->value = $value;
