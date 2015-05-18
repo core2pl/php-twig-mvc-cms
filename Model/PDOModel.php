@@ -23,9 +23,9 @@ class PDOModel extends Base {
 		}
 	}
 	
-	public function getPosts() {
+	public function getPosts($order = "date") {
 		try {
-			$query = $this->dbcon->prepare("SELECT * FROM $this->prefix"."_news ORDER BY date DESC");
+			$query = $this->dbcon->prepare("SELECT * FROM $this->prefix"."_news ORDER BY ".$order." DESC");
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {

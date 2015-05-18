@@ -28,7 +28,7 @@ class User extends Base {
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {
-				return $fetch['nick'];
+				return $fetch[0]['nick'];
 			} else {
 				return false;
 			}

@@ -5,12 +5,13 @@ use Model\Base;
 
 class LoginPanel extends Base {
 	
-	public function getData($user) {
+	public function getData() {
 		if(isset($_SESSION['id'])) {
+			$user = new User("user");
 			$return = (object) null;
 			$return->logged = $this->isLogged();
 			$return->user_panel = "?page=user&action=panel";
-			$return->user = $user;
+			$return->user = $user->getUserName($_SESSION['id']);
 			$return->logout = "?page=logout";
 		} else {
 			$return = (object) null;

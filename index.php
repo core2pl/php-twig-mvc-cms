@@ -1,12 +1,14 @@
 <?php
 require 'SPLAutoLoad.php';
 require 'mysqlpass.php';
-$autoload = new SPLAutoLoad();
+
 use Controller\Page\Index;
+
+$autoload = new SPLAutoLoad();
+$autoload->main();
 if(isset($_GET['page'])) {
 	switch ($_GET['page']) {
 	}
 } else {
-	$autoload->main();
 	$index = new Index();
 }
