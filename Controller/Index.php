@@ -6,7 +6,7 @@ use Model\Test as Test;
 use Model\LoginPanel as LoginPanel;
 use Model\User as User;
 use Model\Menu as Menu;
-use Model\PDO as PDO;
+use Model\PDOModel as PDOModel;
 
 class Index extends Base {
 	
@@ -32,10 +32,11 @@ class Index extends Base {
 		$menu_left = array();
 		$menu_left[] = $menu->renderMenu();
 		
-		$pdo = new PDO("pdo");
+		$pdo = new PDOModel("pdo");
 		
 		echo $this->twig->render('Index.html.twig', array(
 			"menus_left" => $menu_left,
+			"main_page" => $pdo->getPosts(),
 			$login_panel->getName() => $login_panel->getData($user->getUserName($_SESSION['id']))
 		));
 	}
