@@ -33,7 +33,15 @@ class Index extends Base {
 	}
 	
 	private function removePost() {
-		
+		if (isset($this->args['id'])) {
+			if($this->pdo->removePost($this->args['id'])) {
+				echo $this->twig->render('Index.html.twig', array(
+						"menus_left" => $menu_left,
+						"message" => "Post usunięto pomyślnie!",
+						$login_panel->getName() => $login_panel->getData()
+				));
+			}
+		}
 	}
 	
 	private function showPosts() {
@@ -65,6 +73,8 @@ class Index extends Base {
 			$this->args['order'] = $_GET['order'];
 		else
 			$this->args['order'] = "date";
+		if(isset($_GET['id'])) 
+			$this->args['id'] = $_GET['id'];
 	}
 	
 	private function getPosts() {

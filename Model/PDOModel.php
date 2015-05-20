@@ -38,9 +38,9 @@ class PDOModel extends Base {
 		}
 	}
 	
-	public function getPost() {
+	public function getPost($id) {
 		try {
-			$query = $this->dbcon->prepare("SELECT * FROM $prefix"."_news WHERE id = ".$type);
+			$query = $this->dbcon->prepare("SELECT * FROM $prefix"."_news WHERE id = ".$id);
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {
@@ -54,12 +54,12 @@ class PDOModel extends Base {
 	}
 	
 	
-	public function createPost() {
+	public function createPost($title,$text,$author) {
 		try {
 			$query = $this->dbcon->prepare("INSERT INTO $prefix"."_news (id, title, text, type, date, author) VALUES (NULL, :title, :text, \"post\", NOW(), :author);");
-			$query->bindValue(":title",$_POST['title']);
-			$query->bindValue(":text",$_POST['text']);
-			$query->bindValue(":author",$_SESSION['id']);
+			$query->bindValue(":title",$title);
+			$query->bindValue(":text",$text);
+			$query->bindValue(":author",$author);
 			$query->execute();
 			$fetch=$query->rowCount();
 			if($fetch==1) {
@@ -72,12 +72,12 @@ class PDOModel extends Base {
 		}
 	}
 	
-	public function editPost() {
+	public function editPost($id) {
 		try {
 			$query = $this->dbcon->prepare("UPDATE $prefix"."_news SET title = :newtitle,text = :newtext, date = Now() WHERE id = :id");
 			$query->bindValue(":newtitle",$_POST['title']);
 			$query->bindValue(":newtext",$_POST['text']);
-			$query->bindValue(":id",$_GET['id']);
+			$query->bindValue(":id",$id);
 			$query->execute();
 			$fetch=$query->rowCount();
 			if($fetch==1) {
@@ -90,10 +90,10 @@ class PDOModel extends Base {
 		}
 	}
 	
-	public function removePost() {
+	public function removePost($id) {
 		try {
 			$query = $this->dbcon->prepare("DELETE FROM $prefix"."_news WHERE id = :id");
-			$query->bindValue(":id",$_GET['id']);
+			$query->bindValue(":id",$id);
 			$query->execute();
 			$fetch=$query->rowCount();
 			if($fetch==1) {
@@ -106,9 +106,9 @@ class PDOModel extends Base {
 		}
 	}
 	
-	public function getComments() {
+	public function getComments($post_id) {
 		try {
-			$query = $this->dbcon->prepare("SELECT $prefix"."_comments.id, $prefix"."_comments.text, $prefix"."_comments.author, $prefix"."_comments.post, $prefix"."_comments.date, $prefix"."_users.nick FROM $prefix"."_comments INNER JOIN $prefix"."_users ON $prefix"."_comments.author=$prefix"."_users.id WHERE $prefix"."_comments.post=".$_GET['only']." ORDER BY $prefix"."_comments.date DESC;");
+			$query = $this->dbcon->prepare("SELECT $this->prefix"."_comments.id, $this->prefix"."_comments.text, $this->prefix"."_comments.author, $this->prefix"."_comments.post, $this->prefix"."_comments.date, $this->prefix"."_users.nick FROM $this->prefix"."_comments INNER JOIN $this->prefix"."_users ON $this->prefix"."_comments.author=$this->prefix"."_users.id WHERE $this->prefix"."_comments.post=".$post_id." ORDER BY $this->prefix"."_comments.date DESC;");
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {
@@ -121,12 +121,12 @@ class PDOModel extends Base {
 		}
 	}
 	
-	public function createComment() {
+	public function createComment($text,$post_id,$author) {
 		try {
 			$query = $this->dbcon->prepare("INSERT INTO $prefix"."_comments (id, text, author, post, date) VALUES (NULL, :text, :author, :post, NOW());");
-			$query->bindValue(":text",$_POST['text']);
-			$query->bindValue(":post",$_POST['id']);
-			$query->bindValue(":author",$_SESSION['id']);
+			$query->bindValue(":text",$text);
+			$query->bindValue(":post",$post_id);
+			$query->bindValue(":author",$author);
 			$query->execute();
 			$fetch=$query->rowCount();
 			if($fetch==1) {
@@ -139,14 +139,14 @@ class PDOModel extends Base {
 		}
 	}
 	
-	public function removeComment() {
+	public function removeComment($id,$post_id) {
 		try {
 			$query = $this->dbcon->prepare("DELETE FROM $prefix"."_comments WHERE id = :id");
-			$query->bindValue(":id",$_GET['com_id']);
+			$query->bindValue(":id",$id);
 			$query->execute();
 			$fetch=$query->rowCount();
 			if($fetch==1) {
-				return  header("Location: ?action=show&only=".$_GET['only']);
+				return  header("Location: ?action=show&only=".$post_id);
 			} else {
 				return false;
 			}

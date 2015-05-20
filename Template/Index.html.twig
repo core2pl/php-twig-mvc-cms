@@ -39,28 +39,32 @@
 {% block page %}
 	<div id="main_page">
 	<div class="page_block" style="min-height: 50px;">
-	<div style="display: inline-block; float: left;">Sortowanie: <form method="GET">
-	<input type="hidden" name="action" value="show" /><select name="order" onchange="move(this.value)">
-	<option value="date">Data</option><option value="title">Tytuł</option><option value="text">Tekst</option><option value="author">Autor</option>
-	</select><input type="submit" value="Wybierz"></form></div>
-	</div>
-	{% for post in main_page %}
-		<div class="page_block">
-			<div class="post_author">Autor: <a href="?page=user&user={{ post.author }}&action=show">{{ post.author_name }}</a></div>
-			<div class="post_date"><a href="?action=show&only={{ post.id }}">{{ post.date }}</a></div></br>
-			<div class="post_title"><a href="?action=show&only={{ post.id }}"><h2>{{ post.title }}</h2></a></div></br>
-			{{ post.text }}</br>
-			<div class='post_footer'><a href="?action=edit&id={{ post.id }}">Edytuj</a>
-			<script>function deletes(postid) {
-						if(!confirm(\"Czy na pewno chcesz usunąć ten post?\")) {
-						} else {
-							location.replace(\"?action=delete&id=\"+postid);
-						}
-					}
-			</script>
-			<a href="javascript:deletes('{{ post.id }}');">Usuń</a></div>
+	{% if message is defined %}
+		{{ message }}
 		</div>
-	{% endfor %}
+	{% else %}
+		<div style="display: inline-block; float: left;">Sortowanie: <form method="GET">
+		<input type="hidden" name="action" value="show" /><select name="order" onchange="move(this.value)">
+		<option value="date">Data</option><option value="title">Tytuł</option><option value="text">Tekst</option><option value="author">Autor</option>
+		</select><input type="submit" value="Wybierz"></form></div></div>
+		{% for post in main_page %}
+			<div class="page_block">
+				<div class="post_author">Autor: <a href="?page=user&user={{ post.author }}&action=show">{{ post.author_name }}</a></div>
+				<div class="post_date"><a href="?action=show&only={{ post.id }}">{{ post.date }}</a></div></br>
+				<div class="post_title"><a href="?action=show&only={{ post.id }}"><h2>{{ post.title }}</h2></a></div></br>
+				{{ post.text }}</br>
+				<div class='post_footer'><a href="?action=edit&id={{ post.id }}">Edytuj</a>
+				<script>function deletes(postid) {
+							if(!confirm(\"Czy na pewno chcesz usunąć ten post?\")) {
+							} else {
+								location.replace(\"?action=delete&id=\"+postid);
+							}
+						}
+				</script>
+				<a href="javascript:deletes('{{ post.id }}');">Usuń</a></div>
+			</div>
+		{% endfor %}
+	{% endif %}
 	</div>
 {% endblock %}
 
