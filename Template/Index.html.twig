@@ -55,9 +55,9 @@
 				{{ post.text }}</br>
 				<div class='post_footer'><a href="?action=edit&id={{ post.id }}">Edytuj</a>
 				<script>function deletes(postid) {
-							if(!confirm(\"Czy na pewno chcesz usunąć ten post?\")) {
+							if(!confirm("Czy na pewno chcesz usunąć ten post?")) {
 							} else {
-								location.replace(\"?action=delete&id=\"+postid);
+								location.replace("?action=delete&id="+postid);
 							}
 						}
 				</script>
