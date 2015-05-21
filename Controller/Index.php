@@ -6,17 +6,14 @@ use Model\Test as Test;
 use Model\LoginPanel as LoginPanel;
 use Model\User as User;
 use Model\Menu as Menu;
-use Model\PDOModel as PDOModel;
 
 class Index extends Base {
 	
 	private $args;
-	private $pdo;
 	
 	public function __construct() {
 		$this->model = array();
 		$this->args = array();
-		$this->pdo = new PDOModel("pdo");
 	}
 	
 	public function main() {
@@ -59,7 +56,7 @@ class Index extends Base {
 		
 		echo $this->twig->render('Index.html.twig', array(
 			"menus_left" => $menu_left,
-			"main_page" => $posts,
+			"main_page" => $this->pdo->getPosts(),
 			$login_panel->getName() => $login_panel->getData()
 		));
 	}
@@ -75,14 +72,5 @@ class Index extends Base {
 			$this->args['order'] = "date";
 		if(isset($_GET['id'])) 
 			$this->args['id'] = $_GET['id'];
-	}
-	
-	private function getPosts() {
-		$posts = $this->pdo->getPosts($this->args['order']);
-		$user = new User("user");
-		foreach ($posts as $postid => $post) {
-			$posts[$postid]['author_name'] = $user->getUserName($post['author']);
-		}
-		return $posts;
 	}
 }

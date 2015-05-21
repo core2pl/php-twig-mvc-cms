@@ -1,6 +1,8 @@
 <?php
 namespace Service;
 
+use Model\Post as Post;
+
 class PDO {
 	
 	private $dbcon;
@@ -27,6 +29,12 @@ class PDO {
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {
+				$posts = array();
+				foreach ($fetch as $post) {
+					$temp = new Post($fetch['title'],$fetch['text'],$fetch['date'],$fetch['author']);
+					$temp->setAuthor($this->getUserName($temp->getAuthorId()));
+					$posts[] = $temp;
+				}
 				return $fetch;
 			} else {
 				return false;
@@ -150,6 +158,22 @@ class PDO {
 			}
 		} catch(PDOException $e) {
 			return "Błąd: " . $e->getMessage();
+		}
+	}
+	
+	public function getUserName($userId) {
+		try {
+			$query = $this->dbcon->prepare("SELECT id,nick FROM ".$this->prefix."_users WHERE id = :id");
+			$query->bindValue(":id",$userId);
+			$query->execute();
+			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
+			if(!empty($fetch)) {
+				return $fetch[0]['nick'];
+			} else {
+				return false;
+			}
+		} catch(\PDOException $e) {
+			echo "Błąd: " . $e->getMessage();
 		}
 	}
 	

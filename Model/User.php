@@ -21,19 +21,5 @@ class User extends Base {
 		}
 	}
 	
-	public function getUserName($userId) {
-		try {
-			$query = $this->dbcon->prepare("SELECT id,nick FROM ".$this->prefix."_users WHERE id = :id");
-			$query->bindValue(":id",$userId);
-			$query->execute();
-			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
-			if(!empty($fetch)) {
-				return $fetch[0]['nick'];
-			} else {
-				return false;
-			}
-		} catch(\PDOException $e) {
-			echo "Błąd: " . $e->getMessage();
-		}
-	}
+	
 }
