@@ -3,9 +3,16 @@ namespace Controller;
 
 require 'Twig/lib/Twig/Autoloader.php';
 
+use \Service\PDO;
+
 class Base {
 	
-	public $twig;
+	private $twig;
+	private $pdo;
+	
+	function __construct() {
+		$this->pdo = new \Service\PDO();
+	}
 	
 	function twig() {
 		\Twig_Autoloader::register();

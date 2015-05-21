@@ -1,9 +1,7 @@
 <?php
-namespace Model;
+namespace Service;
 
-use Model\Base;
-
-class PDOModel extends Base {
+class PDO {
 	
 	private $dbcon;
 	private $server;
