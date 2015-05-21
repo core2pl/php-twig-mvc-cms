@@ -9,9 +9,11 @@ class Base {
 	
 	private $twig;
 	private $pdo;
+	private $json;
 	
 	function __construct() {
 		$this->pdo = new \Service\PDO();
+		$this->json = new \Service\Json();
 	}
 	
 	function twig() {

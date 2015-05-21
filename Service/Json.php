@@ -1,9 +1,7 @@
 <?php
-namespace Model;
+namespace Service;
 
-use Model\Base;
-
-class Json extends Base {
+class Json {
 	
 	private $name;
 	private $json;
