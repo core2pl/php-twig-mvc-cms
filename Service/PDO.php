@@ -10,8 +10,7 @@ class PDO {
 	private $database;
 	private $prefix;
 	
-	public function __construct($name) {
-		$this->name = $name;
+	public function __construct() {
 		try {
 			$this->server = MYSQL_SERVER;
 			$this->database = MYSQL_DATABASE;
@@ -31,11 +30,11 @@ class PDO {
 			if(!empty($fetch)) {
 				$posts = array();
 				foreach ($fetch as $post) {
-					$temp = new Post($fetch['title'],$fetch['text'],$fetch['date'],$fetch['author']);
+					$temp = new Post($post['id'],$post['title'],$post['text'],$post['date'],$post['author']);
 					$temp->setAuthor($this->getUserName($temp->getAuthorId()));
 					$posts[] = $temp;
 				}
-				return $fetch;
+				return $posts;
 			} else {
 				return false;
 			}

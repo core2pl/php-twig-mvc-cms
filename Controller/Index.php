@@ -12,7 +12,6 @@ class Index extends Base {
 	private $args;
 	
 	public function __construct() {
-		$this->model = array();
 		$this->args = array();
 	}
 	
@@ -47,15 +46,10 @@ class Index extends Base {
 		
 		$login_panel = new LoginPanel("login_panel");
 		
-		$menu = new Menu("Menu główne");
-		$menu->addItem("strona główna","?");
-		$menu_left = array();
-		$menu_left[] = $menu->renderMenu();
-		
-		$posts = $this->getPosts();
-		
+		$menu = new \Service\Menus();
+		echo $this->pdo->getPosts()[0]->author;
 		echo $this->twig->render('Index.html.twig', array(
-			"menus_left" => $menu_left,
+			"menus_left" => $menu->makeMenus(),
 			"main_page" => $this->pdo->getPosts(),
 			$login_panel->getName() => $login_panel->getData()
 		));
