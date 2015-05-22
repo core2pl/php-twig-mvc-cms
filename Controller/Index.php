@@ -47,7 +47,6 @@ class Index extends Base {
 		$login_panel = new LoginPanel("login_panel");
 		
 		$menu = new \Service\Menus();
-		echo $this->pdo->getPosts()[0]->author;
 		echo $this->twig->render('Index.html.twig', array(
 			"menus_left" => $menu->makeMenus(),
 			"main_page" => $this->pdo->getPosts(),

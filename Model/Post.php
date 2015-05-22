@@ -5,14 +5,14 @@ use Model\Base as Base;
 
 class Post extends Base {
 	
-	public $id,$title,$text,$date,$author_id,$author;
+	private $id,$title,$text,$date,$authorid,$author;
 	
-	public function __construct($id=null,$title="",$text="",$date="",$author_id=null) {
+	public function __construct($id,$title,$text,$date,$authorid) {
 		$this->id = $id;
 		$this->title = $title;
 		$this->text = $text;
 		$this->date = $date;
-		$this->author_id = $author_id;
+		$this->authorid = $authorid;
 	}
 	
 	public function getId() {
@@ -32,7 +32,7 @@ class Post extends Base {
 	}
 	
 	public function getAuthorId() {
-		return $this->author_id;
+		return $this->authorid;
 	}
 	
 	public function getAuthor() {

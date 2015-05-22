@@ -49,7 +49,7 @@
 		</select><input type="submit" value="Wybierz"></form></div></div>
 		{% for post in main_page %}
 			<div class="page_block">
-				<div class="post_author">Autor: <a href="?page=user&user={{ post.author_id }}&action=show">{{ post.author }}</a></div>
+				<div class="post_author">Autor: <a href="?page=user&user={{ post.authorid }}&action=show">{{ post.author }}</a></div>
 				<div class="post_date"><a href="?action=show&only={{ post.id }}">{{ post.date }}</a></div></br>
 				<div class="post_title"><a href="?action=show&only={{ post.id }}"><h2>{{ post.title }}</h2></a></div></br>
 				{{ post.text }}</br>
