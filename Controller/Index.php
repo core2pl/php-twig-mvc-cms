@@ -52,8 +52,8 @@ class Index extends Base {
 	}
 	
 	private function addPost() {
-		if (isset($_POST['title']) && isset($_POST['text']) && isset($_SESSION['id'])) {
-			if($this->pdo->addPost($_POST['title'], $_POST['text'], $_SESSION['id'])) {
+		if (isset($_POST['title']) && isset($_POST['text']) /*&& isset($_SESSION['id'])*/) {
+			if($this->pdo->addPost($_POST['title'], $_POST['text'], 1/*$_SESSION['id']*/)) {
 				$this->showPosts();
 			} else {
 				echo $this->twig->render('Index.html.twig', array(
@@ -63,10 +63,9 @@ class Index extends Base {
 				));
 			}
 		} else {
-			$form = new \Model\Form("?action=addpost", "POST");
-			$form->addInput("text", "title", "Tytuł");
-			$form->addInput("text", "text", "Tekst");
-			$form->addInput("hidden", "author", "", $_SESSION['id']);
+			$form = new \Model\Form("?action=addpost", "POST", "center", "width: 100%");
+			$form->addInput("input","text", "title", "Tytuł");
+			$form->addInput("textarea","text", "text", "Tekst");
 			echo $this->twig->render('Index.html.twig', array(
 					"menus_left" => $this->menu->makeMenu("left"),
 					"form" => $form,
