@@ -10,9 +10,11 @@ use Model\Menu as Menu;
 class Index extends Base {
 	
 	private $args;
+	private $login_panel;
 	
 	public function __construct() {
 		$this->args = array();
+		$this->login_panel = new LoginPanel("login_panel");
 	}
 	
 	public function main() {
@@ -25,6 +27,9 @@ class Index extends Base {
 			case "remove":
 				$this->removePost();
 			break;
+			case "addpost":
+				$this->addPost();
+			break;
 		}
 	}
 	
@@ -32,11 +37,41 @@ class Index extends Base {
 		if (isset($this->args['id'])) {
 			if($this->pdo->removePost($this->args['id'])) {
 				echo $this->twig->render('Index.html.twig', array(
-						"menus_left" => $menu_left,
+						"menus_left" => $this->menu->makeMenu("left"),
 						"message" => "Post usunięto pomyślnie!",
-						$login_panel->getName() => $login_panel->getData()
+						$this->login_panel->getName() => $this->login_panel->getData()
+				));
+			} else {
+				echo $this->twig->render('Index.html.twig', array(
+						"menus_left" => $this->menu->makeMenu("left"),
+						"message" => "Wystąpił błąd!",
+						$this->login_panel->getName() => $this->login_panel->getData()
 				));
 			}
+		}
+	}
+	
+	private function addPost() {
+		if (isset($_POST['title']) && isset($_POST['text']) && isset($_SESSION['id'])) {
+			if($this->pdo->addPost($_POST['title'], $_POST['text'], $_SESSION['id'])) {
+				$this->showPosts();
+			} else {
+				echo $this->twig->render('Index.html.twig', array(
+						"menus_left" => $this->menu->makeMenu("left"),
+						"message" => "Wystąpił błąd!",
+						$this->login_panel->getName() => $this->login_panel->getData()
+				));
+			}
+		} else {
+			$form = new \Model\Form("?action=addpost", "POST");
+			$form->addInput("text", "title", "Tytuł");
+			$form->addInput("text", "text", "Tekst");
+			$form->addInput("hidden", "author", "", $_SESSION['id']);
+			echo $this->twig->render('Index.html.twig', array(
+					"menus_left" => $this->menu->makeMenu("left"),
+					"form" => $form,
+					$this->login_panel->getName() => $this->login_panel->getData()
+			));
 		}
 	}
 	
@@ -44,13 +79,12 @@ class Index extends Base {
 		$test_model = new Test("text");
 		$test_model->Read();
 		
-		$login_panel = new LoginPanel("login_panel");
 		
-		$menu = new \Service\Menus();
+		
 		echo $this->twig->render('Index.html.twig', array(
-			"menus_left" => $menu->makeMenus(),
+			"menus_left" => $this->menu->makeMenu("left"),
 			"main_page" => $this->pdo->getPosts(),
-			$login_panel->getName() => $login_panel->getData()
+			$this->login_panel->getName() => $this->login_panel->getData()
 		));
 	}
 	
@@ -65,5 +99,7 @@ class Index extends Base {
 			$this->args['order'] = "date";
 		if(isset($_GET['id'])) 
 			$this->args['id'] = $_GET['id'];
+		if(isset($_GET['only'])) 
+			$this->args['only'] = $_GET['only'];
 	}
 }

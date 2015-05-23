@@ -24,7 +24,7 @@ class PDO {
 	
 	public function getPosts($order = "date") {
 		try {
-			$query = $this->dbcon->prepare("SELECT * FROM $this->prefix"."_news ORDER BY ".$order." DESC");
+			$query = $this->dbcon->prepare("SELECT * FROM ".$this->prefix."_news ORDER BY ".$order." DESC");
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {
@@ -45,7 +45,7 @@ class PDO {
 	
 	public function getPost($id) {
 		try {
-			$query = $this->dbcon->prepare("SELECT * FROM $prefix"."_news WHERE id = ".$id);
+			$query = $this->dbcon->prepare("SELECT * FROM ".$this->prefix."_news WHERE id = ".$id);
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {
@@ -59,9 +59,9 @@ class PDO {
 	}
 	
 	
-	public function createPost($title,$text,$author) {
+	public function addPost($title,$text,$author) {
 		try {
-			$query = $this->dbcon->prepare("INSERT INTO $prefix"."_news (id, title, text, type, date, author) VALUES (NULL, :title, :text, \"post\", NOW(), :author);");
+			$query = $this->dbcon->prepare("INSERT INTO ".$this->prefix."_news (id, title, text, type, date, author) VALUES (NULL, :title, :text, \"post\", NOW(), :author);");
 			$query->bindValue(":title",$title);
 			$query->bindValue(":text",$text);
 			$query->bindValue(":author",$author);
@@ -79,7 +79,7 @@ class PDO {
 	
 	public function editPost($id) {
 		try {
-			$query = $this->dbcon->prepare("UPDATE $prefix"."_news SET title = :newtitle,text = :newtext, date = Now() WHERE id = :id");
+			$query = $this->dbcon->prepare("UPDATE ".$this->prefix."_news SET title = :newtitle,text = :newtext, date = Now() WHERE id = :id");
 			$query->bindValue(":newtitle",$_POST['title']);
 			$query->bindValue(":newtext",$_POST['text']);
 			$query->bindValue(":id",$id);
@@ -97,7 +97,7 @@ class PDO {
 	
 	public function removePost($id) {
 		try {
-			$query = $this->dbcon->prepare("DELETE FROM $prefix"."_news WHERE id = :id");
+			$query = $this->dbcon->prepare("DELETE FROM ".$this->prefix."_news WHERE id = :id");
 			$query->bindValue(":id",$id);
 			$query->execute();
 			$fetch=$query->rowCount();
@@ -113,7 +113,7 @@ class PDO {
 	
 	public function getComments($post_id) {
 		try {
-			$query = $this->dbcon->prepare("SELECT $this->prefix"."_comments.id, $this->prefix"."_comments.text, $this->prefix"."_comments.author, $this->prefix"."_comments.post, $this->prefix"."_comments.date, $this->prefix"."_users.nick FROM $this->prefix"."_comments INNER JOIN $this->prefix"."_users ON $this->prefix"."_comments.author=$this->prefix"."_users.id WHERE $this->prefix"."_comments.post=".$post_id." ORDER BY $this->prefix"."_comments.date DESC;");
+			$query = $this->dbcon->prepare("SELECT ".$this->prefix."_comments.id, ".$this->prefix."_comments.text, ".$this->prefix."_comments.author, ".$this->prefix."_comments.post, ".$this->prefix."_comments.date, ".$this->prefix."_users.nick FROM ".$this->prefix."_comments INNER JOIN ".$this->prefix."_users ON ".$this->prefix."_comments.author=".$this->prefix."_users.id WHERE ".$this->prefix."_comments.post=".$post_id." ORDER BY ".$this->prefix."_comments.date DESC;");
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {
@@ -128,7 +128,7 @@ class PDO {
 	
 	public function createComment($text,$post_id,$author) {
 		try {
-			$query = $this->dbcon->prepare("INSERT INTO $prefix"."_comments (id, text, author, post, date) VALUES (NULL, :text, :author, :post, NOW());");
+			$query = $this->dbcon->prepare("INSERT INTO ".$this->prefix."_comments (id, text, author, post, date) VALUES (NULL, :text, :author, :post, NOW());");
 			$query->bindValue(":text",$text);
 			$query->bindValue(":post",$post_id);
 			$query->bindValue(":author",$author);
@@ -146,7 +146,7 @@ class PDO {
 	
 	public function removeComment($id,$post_id) {
 		try {
-			$query = $this->dbcon->prepare("DELETE FROM $prefix"."_comments WHERE id = :id");
+			$query = $this->dbcon->prepare("DELETE FROM ".$this->prefix."_comments WHERE id = :id");
 			$query->bindValue(":id",$id);
 			$query->execute();
 			$fetch=$query->rowCount();

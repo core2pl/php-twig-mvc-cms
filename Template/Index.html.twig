@@ -42,6 +42,14 @@
 	{% if message is defined %}
 		{{ message }}
 		</div>
+	{% elseif form is defined %}
+		<form action="{{ form.action }}" method="{{ form.method }}" style="{{ form.style }}" class="{{ form.class }}">
+		{% for input in form.inputs %}
+			<div style="{{ input.titleStyle }}" class="{{ input.titleClass }}">{{ input.title }}</div>
+			<div style="{{ input.divStyle }}" class="{{ input.divClass }}"><input type="{{ input.type }}" name="{{ input.name }}" value="{{ input.value }}"></div>
+		{% endfor %}
+		<input type="submit" value="Wyślij">
+		</form>
 	{% else %}
 		<div style="display: inline-block; float: left;">Sortowanie: <form method="GET">
 		<input type="hidden" name="action" value="show" /><select name="order" onchange="move(this.value)">
@@ -57,7 +65,7 @@
 				<script>function deletes(postid) {
 							if(!confirm("Czy na pewno chcesz usunąć ten post?")) {
 							} else {
-								location.replace("?action=delete&id="+postid);
+								location.replace("?action=remove&id="+postid);
 							}
 						}
 				</script>

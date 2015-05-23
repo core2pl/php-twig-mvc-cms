@@ -11,15 +11,24 @@ class Menus {
 	private $menu_footer;
 
 	public function __construct() {
-		
+		$menu_top = array();
+		$menu_left = array();
+		$menu_right = array();
+		$menu_footer = array();
 	}
 	
 	
-	public function makeMenus() {
-		$menu = new Menu("Menu główne");
-		$menu->addItem("strona główna","?");
-		$menu_left = array();
-		$menu_left[] = $menu->renderMenu();
-		return $menu_left;
+	public function makeMenu($position) {
+		switch ($position) {
+			case "left":
+				$menu = new Menu("Menu główne");
+				$menu->addItem("Strona główna","?");
+				$menu_left[] = $menu->renderMenu();
+				$admin_menu = new Menu("Menu Admina");
+				$admin_menu->addItem("Dodaj post", "?action=addpost");
+				$menu_left[] = $admin_menu->renderMenu();
+				return $menu_left;
+			break;
+		}
 	}
 }
