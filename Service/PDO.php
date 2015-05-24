@@ -17,7 +17,7 @@ class PDO {
 			$this->prefix = MYSQL_PREFIX;
 			$this->dbcon = new \PDO("mysql:host=$this->server;dbname=$this->database", MYSQL_LOGIN, MYSQL_PASSWORD);
 			$this->dbcon->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			echo "Błąd: " . $e->getMessage();
 		}
 	}
@@ -38,7 +38,7 @@ class PDO {
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			echo "Błąd: " . $e->getMessage();
 		}
 	}
@@ -59,7 +59,7 @@ class PDO {
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			return "Błąd: " . $e->getMessage();
 		}
 	}
@@ -78,7 +78,7 @@ class PDO {
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			return "Błąd: " . $e->getMessage();
 		}
 	}
@@ -96,7 +96,7 @@ class PDO {
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			return "Błąd: " . $e->getMessage();
 		}
 	}
@@ -112,7 +112,7 @@ class PDO {
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			return "Błąd: " . $e->getMessage();
 		}
 	}
@@ -127,7 +127,7 @@ class PDO {
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			return "Błąd: " . $e->getMessage();
 		}
 	}
@@ -145,7 +145,7 @@ class PDO {
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			return "Błąd: " . $e->getMessage();
 		}
 	}
@@ -161,7 +161,7 @@ class PDO {
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			return "Błąd: " . $e->getMessage();
 		}
 	}
@@ -178,6 +178,127 @@ class PDO {
 				return false;
 			}
 		} catch(\PDOException $e) {
+			echo "Błąd: " . $e->getMessage();
+		}
+	}
+	
+	public function removeUser($userId) {
+		try {
+			$query = $this->dbcon->prepare("DELETE FROM ".$this->prefix."_users WHERE id = :id");
+			$query->bindValue(":id",$userId);
+			$query->execute();
+			$fetch=$query->rowCount();
+			if($fetch==1) {
+				return  true;
+			} else {
+				return false;
+			}
+		} catch(\PDOException $e) {
+			echo "Błąd: " . $e->getMessage();
+		}
+	}
+	
+	public function userExists($userId) {
+		try {
+			$query = $this->dbcon->prepare("SELECT id FROM ".$this->prefix."_users WHERE id = :id");
+			$query->bindValue(":id",$userId);
+			$query->execute();
+			$fetch=$query->fetch();
+			if(!empty($fetch)) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch(\PDOException $e) {
+			return "Błąd: " . $e->getMessage();
+		}
+	}
+	
+	public function getUserRank($userId) {
+		try {
+			$query = $this->dbcon->prepare("SELECT rank FROM ".$this->prefix."_users WHERE id = :id");
+			$query->bindValue(":id",$userId);
+			$query->execute();
+			$fetch=$query->fetch();
+			if(!empty($fetch)) {
+				return $fetch['rank'];
+			} else {
+				return false;
+			}
+		} catch(\PDOException $e) {
+			return "Błąd: " . $e->getMessage();
+		}
+	}
+	
+	public function setLastLogin($userId) {
+		try {
+			$query = $this->dbcon->prepare("UPDATE ".$this->prefix."_users SET last_login = NOW() WHERE id = :id");
+			$query->bindValue(":id",$userId);
+			$query->execute();
+			$fetch=$query->fetch();
+			if(!empty($fetch)) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch(\PDOException $e) {
+			return "Błąd: " . $e->getMessage();
+		}
+	}
+	
+	public function getLastLogin($userId) {
+		try {
+			$query = $this->dbcon->prepare("SELECT id,last_login FROM ".$this->prefix."_users WHERE id = :id");
+			$query->bindValue(":id",$userId);
+			$query->execute();
+			$fetch=$query->fetch();
+			if(!empty($fetch)) {
+				return $fetch;
+			} else {
+				return Array();
+			}
+		} catch(\PDOException $e) {
+			return "Błąd: " . $e->getMessage();
+		}
+	}
+	
+	public function getUserData($userId) {
+		try {
+			$query = $this->dbcon->prepare("SELECT * FROM ".$this->prefix."_users WHERE id = :id");
+			$query->bindValue(":id",$userId);
+			$query->execute();
+			$fetch=$query->fetch();
+			if(!empty($fetch)) {
+				return $fetch;
+			} else {
+				return null;
+			}
+		} catch(\PDOException $e) {
+			return "Błąd: " . $e->getMessage();
+		}
+	}
+	
+	public function loginUser() {
+		try {
+			$query = $this->dbcon->prepare("SELECT id,nick,password,salt FROM ".$this->prefix."_users WHERE nick = :nick");
+			$query->bindValue(":nick",$_POST['nick']);
+			$query->execute();
+			$fetch=$query->fetch();
+			$dbcon = null;
+			if(!empty($fetch)) {
+				$password = $fetch['password'];
+				$salt = $fetch['salt'];
+				$password2 = hash('sha256', $salt . $_POST['password']);
+				if($password == $password2) {
+					$_SESSION['id']=$fetch['id'];
+					return 0;
+				} else {
+					return 1;
+				}
+			} else {
+				return 2;
+			}
+		} catch(PDOException $e) {
 			echo "Błąd: " . $e->getMessage();
 		}
 	}

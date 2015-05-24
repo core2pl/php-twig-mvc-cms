@@ -1,4 +1,5 @@
 <?php
+session_start();
 require 'SPLAutoLoad.php';
 require 'mysqlpass.php';
 

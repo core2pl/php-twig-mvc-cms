@@ -18,15 +18,17 @@ class Menus {
 	}
 	
 	
-	public function makeMenu($position) {
+	public function makeMenu($position,$rank) {
 		switch ($position) {
 			case "left":
 				$menu = new Menu("Menu główne");
 				$menu->addItem("Strona główna","?");
 				$menu_left[] = $menu->renderMenu();
-				$admin_menu = new Menu("Menu Admina");
-				$admin_menu->addItem("Dodaj post", "?action=addpost");
-				$menu_left[] = $admin_menu->renderMenu();
+				if($rank<=1) {
+					$admin_menu = new Menu("Menu Admina");
+					$admin_menu->addItem("Dodaj post", "?action=addpost");
+					$menu_left[] = $admin_menu->renderMenu();
+				}
 				return $menu_left;
 			break;
 		}

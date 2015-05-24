@@ -5,20 +5,20 @@ use Model\Base;
 
 class LoginPanel extends Base {
 	
-	public function getData() {
+	public function getData($userName) {
 		if(isset($_SESSION['id'])) {
-			$user = new User("user");
 			$return = (object) null;
 			$return->logged = $this->isLogged();
 			$return->user_panel = "?page=user&action=panel";
-			$return->user = $user->getUserName($_SESSION['id']);
-			$return->logout = "?page=logout";
+			$return->user = $userName;
+			$return->logout = "?action=logout";
 		} else {
 			$return = (object) null;
 			$return->logged = $this->isLogged();
-			$return->register = "?page=register";
-			$return->login = "?page=login";
+			$return->register = "?action=register";
+			$return->login = "?action=login";
 		}
+		return $return;
 	}
 	
 	public function isLogged() {
