@@ -63,7 +63,6 @@ body {
 }
 
 .page_block {
-	min-height:150px;
 	box-shadow: 3px 3px 10px #444444;
 	background-color: rgba(255,255,255,0.8);
 	word-break: break-all;
@@ -144,6 +143,7 @@ form textarea {
 	padding: 2px;
 	border-width: 1px;
 	width: 100%;
+	min-height: 200px;
 }
 
 .post_title_edit {
@@ -191,6 +191,5 @@ form textarea {
 }
 
 .center {
-	margin-left: auto;
-	margin-right: auto;
+	text-align: center;
 }

@@ -22,7 +22,10 @@ class Index extends Base {
 		$this->getArgs();
 		switch ($this->args['action']) {
 			case "show":
-				$this->showPosts();	
+				if(isset($this->args['only']))
+					$this->showPost();
+				else
+					$this->showPosts();	
 			break;
 			case "remove":
 				$this->removePost();
@@ -75,15 +78,18 @@ class Index extends Base {
 	}
 	
 	private function showPosts() {
-		$test_model = new Test("text");
-		$test_model->Read();
-		
-		
-		
 		echo $this->twig->render('Index.html.twig', array(
 			"menus_left" => $this->menu->makeMenu("left"),
 			"main_page" => $this->pdo->getPosts(),
 			$this->login_panel->getName() => $this->login_panel->getData()
+		));
+	}
+	
+	private function showPost() {
+		echo $this->twig->render('Index.html.twig', array(
+				"menus_left" => $this->menu->makeMenu("left"),
+				"main_page" => $this->pdo->getPost($this->args['only']),
+				$this->login_panel->getName() => $this->login_panel->getData()
 		));
 	}
 	

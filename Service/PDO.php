@@ -49,7 +49,13 @@ class PDO {
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {
-				return $fetch;
+				$posts = array();
+				foreach ($fetch as $post) {
+					$temp = new Post($post['id'],$post['title'],$post['text'],$post['date'],$post['author']);
+					$temp->setAuthor($this->getUserName($temp->getAuthorId()));
+					$posts[] = $temp;
+				}
+				return $posts;
 			} else {
 				return false;
 			}
