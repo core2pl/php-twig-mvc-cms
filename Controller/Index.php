@@ -39,6 +39,10 @@ class Index extends Base {
 			case "logout":
 				session_unset();
 				session_destroy();
+				header("Location: ?");
+			break;
+			case "register":
+				$this->register();
 			break;
 		}
 	}
@@ -104,7 +108,7 @@ class Index extends Base {
 		if (isset($_POST['nick']) && isset($_POST['password']) && !isset($_SESSION['id'])) {
 			$login = $this->pdo->loginUser($_POST['nick'], $_POST['password']);
 			if($login==0) {
-				header("Location: ");
+				header("Location: ?");
 			} else if($login==1) {
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
@@ -134,6 +138,10 @@ class Index extends Base {
 					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
 			));
 		}
+	}
+	
+	private function register() {
+		
 	}
 	
 	private function getArgs() {
