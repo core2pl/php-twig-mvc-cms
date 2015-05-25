@@ -30,8 +30,17 @@ class Index extends Base {
 			case "remove":
 				$this->removePost();
 			break;
+			case "removecom":
+				$this->removeComment();
+				break;
 			case "addpost":
 				$this->addPost();
+			break;
+			case "addcom":
+				$this->addComment();
+			break;
+			case "editpost":
+				$this->editPost();
 			break;
 			case "login":
 				$this->login();
@@ -47,15 +56,17 @@ class Index extends Base {
 		}
 	}
 	
-	private function removePost() {
-		if (isset($this->args['id'])) {
-			if($this->pdo->removePost($this->args['id'])) {
+	private function removeComment() {
+		if (isset($this->args['only']) && isset($_GET['comid']) && isset($_SESSION['id'])) {
+			if($this->pdo->removeComment($_GET['comid'],$this->args['only'])) {
+				header("refresh: 2;url=?");
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Post usunięto pomyślnie!",
 						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
 				));
 			} else {
+				header("refresh: 2;url=?");
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Wystąpił błąd!",
@@ -65,10 +76,10 @@ class Index extends Base {
 		}
 	}
 	
-	private function addPost() {
-		if (isset($_POST['title']) && isset($_POST['text']) && isset($_SESSION['id'])) {
-			if($this->pdo->addPost($_POST['title'], $_POST['text'], $_SESSION['id'])) {
-				$this->showPosts();
+	private function addComment() {
+		if (isset($_POST['text']) && isset($this->args['only']) && isset($_SESSION['id'])) {
+			if($this->pdo->addComment($_POST['text'], $this->args['only'], $_SESSION['id'])) {
+				header("Location: ?action=show&only=".$this->args['only']);
 			} else {
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left"),
@@ -88,10 +99,78 @@ class Index extends Base {
 		}
 	}
 	
+	private function removePost() {
+		if (isset($this->args['id'])) {
+			if($this->pdo->removePost($this->args['id']) && isset($_SESSION['id'])) {
+				header("refresh: 2;url=?");
+				echo $this->twig->render('Index.html.twig', array(
+						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+						"message" => "Post usunięto pomyślnie!",
+						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+				));
+			} else {
+				header("refresh: 2;url=?");
+				echo $this->twig->render('Index.html.twig', array(
+						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+						"message" => "Wystąpił błąd!",
+						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+				));
+			}
+		}
+	}
+	
+	private function addPost() {
+		if (isset($_POST['title']) && isset($_POST['text']) && isset($_SESSION['id'])) {
+			if($this->pdo->addPost($_POST['title'], $_POST['text'], $_SESSION['id'])) {
+				header("Location: ?");
+			} else {
+				echo $this->twig->render('Index.html.twig', array(
+						"menus_left" => $this->menu->makeMenu("left"),
+						"message" => "Wystąpił błąd!",
+						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+				));
+			}
+		} else {
+			$form = new \Model\Form("?action=addpost", "POST", "center", "width: 100%");
+			$form->addInput("input","text", "title", "Tytuł");
+			$form->addInput("textarea","text", "text", "Tekst");
+			echo $this->twig->render('Index.html.twig', array(
+					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+					"form" => $form,
+					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+			));
+		}
+	}
+	
+	private function editPost() {
+		if (isset($_POST['title']) && isset($_POST['text']) && isset($this->args['only']) && isset($_SESSION['id'])) {
+			if($this->pdo->editPost($this->args['only'], $_POST['title'], $_POST['text'])) {
+				header("Location: ?action=show&only=".$this->args['only']);
+			} else {
+				header("refresh:2;url=?action=editpost&only=".$this->args['only']);
+				echo $this->twig->render('Index.html.twig', array(
+						"menus_left" => $this->menu->makeMenu("left"),
+						"message" => "Wystąpił błąd!",
+						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+				));
+			}
+		} else {
+			$value = $this->pdo->getPost($this->args['only']);
+			$form = new \Model\Form("?action=editpost&only=".$this->args['only'], "POST", "center", "width: 100%");
+			$form->addInput("input","text", "title", "Tytuł", $value->getTitle());
+			$form->addInput("textarea","text", "text", "Tekst", $value->getText());
+			echo $this->twig->render('Index.html.twig', array(
+					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+					"form" => $form,
+					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+			));
+		}
+	}
+	
 	private function showPosts() {
 		echo $this->twig->render('Index.html.twig', array(
-				"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
-			"main_page" => $this->pdo->getPosts(),
+			"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+			"main_page" => $this->pdo->getPosts($this->args['order']),
 			$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
 		));
 	}
@@ -99,7 +178,8 @@ class Index extends Base {
 	private function showPost() {
 		echo $this->twig->render('Index.html.twig', array(
 				"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
-				"main_page" => $this->pdo->getPost($this->args['only']),
+				"post" => $this->pdo->getPost($this->args['only']),
+				"rank" => $this->args['srank'],
 				$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
 		));
 	}
@@ -129,7 +209,7 @@ class Index extends Base {
 					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
 			));
 		} else {
-			$form = new \Model\Form("?action=login", "POST", "center", "width: 100%");
+			$form = new \Model\Form("?action=login", "POST");
 			$form->addInput("input","text", "nick", "Nick (>5 znaków, bez liczb):");
 			$form->addInput("input","password", "password", "Hasło (>5 znaków, bez liczb):");
 			echo $this->twig->render('Index.html.twig', array(
@@ -141,7 +221,50 @@ class Index extends Base {
 	}
 	
 	private function register() {
-		
+		if (isset($_POST['nick']) && isset($_POST['password']) && isset($_POST['password2']) 
+				&& isset($_POST['email']) && !isset($_SESSION['id'])) {	
+			if($_POST['password']!=$_POST['password2']) {
+				header("refresh:2;url=?action=register");
+				echo $this->twig->render('Index.html.twig', array(
+						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+						"message" => "Hasła się różnią!",
+						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+				));
+				return;
+			}
+			if($this->pdo->registerUser($_POST['nick'], $_POST['password'],$_POST['email'])) {
+				header("refresh:2;url=?");
+				echo $this->twig->render('Index.html.twig', array(
+						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+						"message" => "Rejestracja pomyślna!",
+						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+				));
+			} else  {
+				header("refresh:2;url=?action=register");
+				echo $this->twig->render('Index.html.twig', array(
+						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+						"message" => "Taki nick już istnieje!",
+						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+				));
+			}
+		} else if(isset($_SESSION['id'])) {
+			echo $this->twig->render('Index.html.twig', array(
+					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+					"message" => "Jesteś już zalogowany!",
+					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+			));
+		} else {
+			$form = new \Model\Form("?action=register", "POST");
+			$form->addInput("input","text", "nick", "Nick (>5 znaków, bez liczb):");
+			$form->addInput("input","text", "email", "Email (zmyślony):");
+			$form->addInput("input","password", "password", "Hasło (>5 znaków, bez liczb):");
+			$form->addInput("input","password", "password2", "Potwierdź Hasło (>5 znaków, bez liczb):");
+			echo $this->twig->render('Index.html.twig', array(
+					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+					"form" => $form,
+					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+			));
+		}
 	}
 	
 	private function getArgs() {

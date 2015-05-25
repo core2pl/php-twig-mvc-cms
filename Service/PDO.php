@@ -49,12 +49,10 @@ class PDO {
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {
-				$posts = array();
-				foreach ($fetch as $post) {
-					$temp = new Post($post['id'],$post['title'],$post['text'],$post['date'],$post['author']);
-					$temp->setAuthor($this->getUserName($temp->getAuthorId()));
-					$posts[] = $temp;
-				}
+				$post = $fetch[0];
+				$posts = new Post($post['id'],$post['title'],$post['text'],$post['date'],$post['author']);
+				$posts->comments = $this->getComments($post['id']);
+				$posts->setAuthor($this->getUserName($posts->getAuthorId()));
 				return $posts;
 			} else {
 				return false;
@@ -83,12 +81,12 @@ class PDO {
 		}
 	}
 	
-	public function editPost($id) {
+	public function editPost($postId, $postTitle, $postText) {
 		try {
 			$query = $this->dbcon->prepare("UPDATE ".$this->prefix."_news SET title = :newtitle,text = :newtext, date = Now() WHERE id = :id");
-			$query->bindValue(":newtitle",$_POST['title']);
-			$query->bindValue(":newtext",$_POST['text']);
-			$query->bindValue(":id",$id);
+			$query->bindValue(":newtitle",$postTitle);
+			$query->bindValue(":newtext",$postText);
+			$query->bindValue(":id",$postId);
 			$query->execute();
 			$fetch=$query->rowCount();
 			if($fetch==1) {
@@ -132,7 +130,7 @@ class PDO {
 		}
 	}
 	
-	public function createComment($text,$post_id,$author) {
+	public function addComment($text,$post_id,$author) {
 		try {
 			$query = $this->dbcon->prepare("INSERT INTO ".$this->prefix."_comments (id, text, author, post, date) VALUES (NULL, :text, :author, :post, NOW());");
 			$query->bindValue(":text",$text);
@@ -157,7 +155,7 @@ class PDO {
 			$query->execute();
 			$fetch=$query->rowCount();
 			if($fetch==1) {
-				return  header("Location: ?action=show&only=".$post_id);
+				return header("Location: ?action=show&only=".$post_id);
 			} else {
 				return false;
 			}
@@ -278,17 +276,17 @@ class PDO {
 		}
 	}
 	
-	public function loginUser() {
+	public function loginUser($nick,$pass) {
 		try {
 			$query = $this->dbcon->prepare("SELECT id,nick,password,salt FROM ".$this->prefix."_users WHERE nick = :nick");
-			$query->bindValue(":nick",$_POST['nick']);
+			$query->bindValue(":nick",$nick);
 			$query->execute();
 			$fetch=$query->fetch();
 			$dbcon = null;
 			if(!empty($fetch)) {
 				$password = $fetch['password'];
 				$salt = $fetch['salt'];
-				$password2 = hash('sha256', $salt . $_POST['password']);
+				$password2 = hash('sha256', $salt .$pass);
 				if($password == $password2) {
 					$_SESSION['id']=$fetch['id'];
 					return 0;
@@ -297,6 +295,27 @@ class PDO {
 				}
 			} else {
 				return 2;
+			}
+		} catch(PDOException $e) {
+			echo "Błąd: " . $e->getMessage();
+		}
+	}
+	
+	public function registerUser($nick,$pass,$email) {
+		try {
+			$query = $this->dbcon->prepare("SELECT id,nick FROM ".$this->prefix."_users WHERE nick = :nick");
+			$query->bindValue(':nick', $nick);
+			$query-> execute();
+			$fetch = $query->fetch();
+			if(empty($fetch)) {
+				$salt = uniqid(mt_rand(), true);
+				$password = hash('sha256', $salt . $pass);
+				$query = $this->dbcon->prepare("INSERT INTO ".$this->prefix."_users VALUES ('',?,?,?,?,NOW(),?,'1')");
+				$return = $query->execute(array($nick, $email, $password, $salt, 2));
+				$this->loginUser($nick, $pass);
+				return true;
+			} else {
+				return false;
 			}
 		} catch(PDOException $e) {
 			echo "Błąd: " . $e->getMessage();
