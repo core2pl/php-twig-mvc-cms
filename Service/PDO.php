@@ -81,16 +81,16 @@ class PDO {
 		}
 	}
 	
-	public function editPost($postId, $postTitle, $postText) {
+	public function editPost(\Model\Post $post) {
 		try {
 			$query = $this->dbcon->prepare("UPDATE ".$this->prefix."_news SET title = :newtitle,text = :newtext, date = Now() WHERE id = :id");
-			$query->bindValue(":newtitle",$postTitle);
-			$query->bindValue(":newtext",$postText);
-			$query->bindValue(":id",$postId);
+			$query->bindValue(":newtitle",$post->getTitle());
+			$query->bindValue(":newtext",$post->getText());
+			$query->bindValue(":id",$post->getId());
 			$query->execute();
 			$fetch=$query->rowCount();
 			if($fetch==1) {
-				return  true;
+				return true;
 			} else {
 				return false;
 			}
@@ -115,13 +115,17 @@ class PDO {
 		}
 	}
 	
-	public function getComments($post_id) {
+	public function getComments($postId) {
 		try {
-			$query = $this->dbcon->prepare("SELECT ".$this->prefix."_comments.id, ".$this->prefix."_comments.text, ".$this->prefix."_comments.author, ".$this->prefix."_comments.post, ".$this->prefix."_comments.date, ".$this->prefix."_users.nick FROM ".$this->prefix."_comments INNER JOIN ".$this->prefix."_users ON ".$this->prefix."_comments.author=".$this->prefix."_users.id WHERE ".$this->prefix."_comments.post=".$post_id." ORDER BY ".$this->prefix."_comments.date DESC;");
+			$query = $this->dbcon->prepare("SELECT ".$this->prefix."_comments.id, ".$this->prefix."_comments.text, ".$this->prefix."_comments.author, ".$this->prefix."_comments.post, ".$this->prefix."_comments.date, ".$this->prefix."_users.nick FROM ".$this->prefix."_comments INNER JOIN ".$this->prefix."_users ON ".$this->prefix."_comments.author=".$this->prefix."_users.id WHERE ".$this->prefix."_comments.post=".$postId." ORDER BY ".$this->prefix."_comments.date DESC;");
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
 			if(!empty($fetch)) {
-				return $fetch;
+				$comments = array();
+				foreach($fetch as $comment) {
+					$comments[] = new \Model\Comment($comment['id'], $comment['text'], $comment['author'], $comment['date'], $comment['post'], $comment['nick']);
+				}
+				return $comments;
 			} else {
 				return false;
 			}

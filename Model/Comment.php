@@ -5,21 +5,23 @@ use Model\Base as Base;
 
 class Comment extends Base {
 
-	private $title,$text,$author,$post;
+	private $id,$text,$author,$date,$post,$nick;
 	
-	public function __construct($title,$text,$author,$post) {
-		$this->title = $title;
+	public function __construct($id,$text,$author,$date,$post,$nick) {
+		$this->id = $id;
 		$this->text = $text;
 		$this->author = $author;
+		$this->date = $date;
 		$this->post = $post;
+		$this->nick = $nick;
 	}
 	
-	public function getTitle() {
-		return $this->title;
+	public function getId() {
+		return $this->id;
 	}
 	
-	public function setTitle($title) {
-		$this->title = $title;
+	public function setId($id) {
+		$this->id = $id;
 	}
 	
 	public function getText() {
@@ -38,11 +40,23 @@ class Comment extends Base {
 		$this->author =$author;
 	}
 	
+	public function getDate() {
+		return $this->date = $date;
+	}
+	
 	public function getPostId() {
 		return $this->post;
 	}
 	
 	public function setPostId($postId) {
 		$this->post = $postId;
+	}
+	
+	public function getNick() {
+		return $this->nick;
+	}
+	
+	public function setNick($nick) {
+		$this->nick = $nick;
 	}
 }
