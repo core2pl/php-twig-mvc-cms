@@ -43,7 +43,7 @@
 		{{ message }}
 		</div>
 	{% elseif form is defined %}
-		{% include 'Form.twig.php' %}
+		{% include 'Form.html.twig' %}
 	{% elseif main_page is defined %}
 		<div class="page_block" style="min-height: 50px;">
 		<div style="display: inline-block; float: left;">Sortowanie: <form method="GET">
@@ -68,7 +68,7 @@
 			</div>
 		{% endfor %}
 	{% elseif post is defined %}
-		{% include 'Post.twig.php' %}
+		{% include 'Post.html.twig' %}
 	{% endif %}
 	</div>
 {% endblock %}

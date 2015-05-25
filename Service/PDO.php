@@ -63,12 +63,12 @@ class PDO {
 	}
 	
 	
-	public function addPost($title,$text,$author) {
+	public function addPost(\Model\Post $post) {
 		try {
 			$query = $this->dbcon->prepare("INSERT INTO ".$this->prefix."_news (id, title, text, type, date, author) VALUES (NULL, :title, :text, \"post\", NOW(), :author);");
-			$query->bindValue(":title",$title);
-			$query->bindValue(":text",$text);
-			$query->bindValue(":author",$author);
+			$query->bindValue(":title",$post->getTitle());
+			$query->bindValue(":text",$post->getText());
+			$query->bindValue(":author",$post->getAuthor());
 			$query->execute();
 			$fetch=$query->rowCount();
 			if($fetch==1) {
