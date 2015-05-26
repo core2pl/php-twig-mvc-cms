@@ -14,7 +14,7 @@ class Index extends Base {
 	
 	public function __construct() {
 		$this->args = array();
-		$this->login_panel = new LoginPanel("login_panel");
+		$this->login_panel = new LoginPanel();
 	}
 	
 	public function main() {
@@ -58,33 +58,40 @@ class Index extends Base {
 	
 	private function removeComment() {
 		if (isset($this->args['only']) && isset($_GET['comid']) && isset($_SESSION['id'])) {
-			if($this->pdo->removeComment($_GET['comid'],$this->args['only'])) {
-				header("refresh: 2;url=?");
+			if($this->pdo->removeComment($_GET['comid'])) {
+				header("refresh: 2;url=?action=show&only=".$this->args['only']);
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Post usunięto pomyślnie!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			} else {
-				header("refresh: 2;url=?");
+				header("refresh: 2;url=?action=show&only=".$this->args['only']);
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Wystąpił błąd!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			}
+		} else {
+			header("refresh: 2;url=?action=show&only=".$this->args['only']);
+			echo $this->twig->render('Index.html.twig', array(
+					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+					"message" => "Wystąpił błąd!",
+					"login_panel" => $this->login_panel->getData($this->args['sname'])
+			));
 		}
 	}
 	
 	private function addComment() {
 		if (isset($_POST['text']) && isset($this->args['only']) && isset($_SESSION['id'])) {
-			if($this->pdo->addComment($_POST['text'], $this->args['only'], $_SESSION['id'])) {
+			if($this->pdo->addComment(new \Model\Comment(null, $_POST['text'], $_SESSION['id'], null, $this->args['only'], null))) {
 				header("Location: ?action=show&only=".$this->args['only']);
 			} else {
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left"),
 						"message" => "Wystąpił błąd!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			}
 		} else {
@@ -94,40 +101,47 @@ class Index extends Base {
 			echo $this->twig->render('Index.html.twig', array(
 					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 					"form" => $form,
-					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+					"login_panel" => $this->login_panel->getData($this->args['sname'])
 			));
 		}
 	}
 	
 	private function removePost() {
-		if (isset($this->args['id'])) {
-			if($this->pdo->removePost($this->args['id']) && isset($_SESSION['id'])) {
+		if (isset($this->args['id']) && isset($_SESSION['id'])) {
+			if($this->pdo->removePost($this->args['id'])) {
 				header("refresh: 2;url=?");
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Post usunięto pomyślnie!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			} else {
 				header("refresh: 2;url=?");
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Wystąpił błąd!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			}
+		} else {
+			header("refresh: 2;url=?");
+			echo $this->twig->render('Index.html.twig', array(
+					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+					"message" => "Wystąpił błąd!",
+					"login_panel" => $this->login_panel->getData($this->args['sname'])
+			));
 		}
 	}
 	
 	private function addPost() {
 		if (isset($_POST['title']) && isset($_POST['text']) && isset($_SESSION['id'])) {
-			if($this->pdo->addPost($_POST['title'], $_POST['text'], $_SESSION['id'])) {
+			if($this->pdo->addPost(new \Model\Post(null, $_POST['title'], $_POST['text'], null, $_SESSION['id']))) {
 				header("Location: ?");
 			} else {
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left"),
 						"message" => "Wystąpił błąd!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			}
 		} else {
@@ -137,7 +151,7 @@ class Index extends Base {
 			echo $this->twig->render('Index.html.twig', array(
 					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 					"form" => $form,
-					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+					"login_panel" => $this->login_panel->getData($this->args['sname'])
 			));
 		}
 	}
@@ -151,7 +165,7 @@ class Index extends Base {
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left"),
 						"message" => "Wystąpił błąd!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			}
 		} else {
@@ -162,7 +176,7 @@ class Index extends Base {
 			echo $this->twig->render('Index.html.twig', array(
 					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 					"form" => $form,
-					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+					"login_panel" => $this->login_panel->getData($this->args['sname'])
 			));
 		}
 	}
@@ -171,7 +185,7 @@ class Index extends Base {
 		echo $this->twig->render('Index.html.twig', array(
 			"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 			"main_page" => $this->pdo->getPosts($this->args['order']),
-			$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+			"login_panel" => $this->login_panel->getData($this->args['sname'])
 		));
 	}
 	
@@ -180,7 +194,7 @@ class Index extends Base {
 				"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 				"post" => $this->pdo->getPost($this->args['only']),
 				"rank" => $this->args['srank'],
-				$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+				"login_panel" => $this->login_panel->getData($this->args['sname'])
 		));
 	}
 	
@@ -193,20 +207,20 @@ class Index extends Base {
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Złe hasło!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			} else if($login==2) {
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Zły login!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			}
 		} else if(isset($_SESSION['id'])) {
 			echo $this->twig->render('Index.html.twig', array(
 					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 					"message" => "Jesteś już zalogowany!",
-					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+					"login_panel" => $this->login_panel->getData($this->args['sname'])
 			));
 		} else {
 			$form = new \Model\Form("?action=login", "POST");
@@ -215,7 +229,7 @@ class Index extends Base {
 			echo $this->twig->render('Index.html.twig', array(
 					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 					"form" => $form,
-					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+					"login_panel" => $this->login_panel->getData($this->args['sname'])
 			));
 		}
 	}
@@ -228,7 +242,7 @@ class Index extends Base {
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Hasła się różnią!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 				return;
 			}
@@ -237,21 +251,21 @@ class Index extends Base {
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Rejestracja pomyślna!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			} else  {
 				header("refresh:2;url=?action=register");
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Taki nick już istnieje!",
-						$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			}
 		} else if(isset($_SESSION['id'])) {
 			echo $this->twig->render('Index.html.twig', array(
 					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 					"message" => "Jesteś już zalogowany!",
-					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+					"login_panel" => $this->login_panel->getData($this->args['sname'])
 			));
 		} else {
 			$form = new \Model\Form("?action=register", "POST");
@@ -262,7 +276,7 @@ class Index extends Base {
 			echo $this->twig->render('Index.html.twig', array(
 					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 					"form" => $form,
-					$this->login_panel->getName() => $this->login_panel->getData($this->args['sname'])
+					"login_panel" => $this->login_panel->getData($this->args['sname'])
 			));
 		}
 	}
