@@ -134,12 +134,12 @@ class PDO {
 		}
 	}
 	
-	public function addComment($text,$post_id,$author) {
+	public function addComment(\Model\Comment $comment) {
 		try {
 			$query = $this->dbcon->prepare("INSERT INTO ".$this->prefix."_comments (id, text, author, post, date) VALUES (NULL, :text, :author, :post, NOW());");
-			$query->bindValue(":text",$text);
-			$query->bindValue(":post",$post_id);
-			$query->bindValue(":author",$author);
+			$query->bindValue(":text",$comment->getText());
+			$query->bindValue(":post",$comment->getPostId());
+			$query->bindValue(":author",$comment->getAuthor());
 			$query->execute();
 			$fetch=$query->rowCount();
 			if($fetch==1) {
@@ -152,14 +152,14 @@ class PDO {
 		}
 	}
 	
-	public function removeComment($id,$post_id) {
+	public function removeComment($id) {
 		try {
 			$query = $this->dbcon->prepare("DELETE FROM ".$this->prefix."_comments WHERE id = :id");
 			$query->bindValue(":id",$id);
 			$query->execute();
 			$fetch=$query->rowCount();
 			if($fetch==1) {
-				return header("Location: ?action=show&only=".$post_id);
+				return true;
 			} else {
 				return false;
 			}
@@ -271,7 +271,7 @@ class PDO {
 			$query->execute();
 			$fetch=$query->fetch();
 			if(!empty($fetch)) {
-				return $fetch;
+				return new \Model\User($fetch['id'], $fetch['nick'], $fetch['email']);
 			} else {
 				return null;
 			}
