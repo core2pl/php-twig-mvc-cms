@@ -22,7 +22,7 @@ class Index extends Base {
 		$this->getArgs();
 		switch ($this->args['action']) {
 			case "show":
-				if(isset($this->args['only']))
+				if(isset($this->args['id']))
 					$this->showPost();
 				else
 					$this->showPosts();	
@@ -52,6 +52,12 @@ class Index extends Base {
 			break;
 			case "register":
 				$this->register();
+			break;
+			default:
+				if(isset($this->args['only']))
+					$this->showPost();
+				else
+					$this->showPosts();
 			break;
 		}
 	}
@@ -158,7 +164,7 @@ class Index extends Base {
 	
 	private function editPost() {
 		if (isset($_POST['title']) && isset($_POST['text']) && isset($this->args['only']) && isset($_SESSION['id'])) {
-			if($this->pdo->editPost($this->args['only'], $_POST['title'], $_POST['text'])) {
+			if($this->pdo->editPost(new \Model\Post(null, $_POST['title'], $_POST['text'], null, $_SESSION['id']))) {
 				header("Location: ?action=show&only=".$this->args['only']);
 			} else {
 				header("refresh:2;url=?action=editpost&only=".$this->args['only']);
@@ -282,18 +288,12 @@ class Index extends Base {
 	}
 	
 	private function getArgs() {
-		if(isset($_GET['action']))
-			$this->args['action'] = $_GET['action'];
-		else 
-			$this->args['action'] = "show";
-		if(isset($_GET['order']))
-			$this->args['order'] = $_GET['order'];
-		else
-			$this->args['order'] = "date";
-		if(isset($_GET['id'])) 
-			$this->args['id'] = $_GET['id'];
-		if(isset($_GET['only'])) 
-			$this->args['only'] = $_GET['only'];
+		$uri = $_SERVER["REQUEST_URI"];
+		$url = explode("/", $uri);
+		if(isset($url[1])) 
+			$this->args['action'] = $url[1];
+		if(isset($url[2]))
+			$this->args['id'] = $url[2];
 		if(isset($_SESSION['id'])) {
 			$this->args['sid'] = $_SESSION['id'];
 			$this->args['srank'] = $this->pdo->getUserRank($this->args['sid']);
