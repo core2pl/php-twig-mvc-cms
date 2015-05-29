@@ -17,7 +17,7 @@ class Json {
 	}
 	
 	public function put($name,$value) {
-		$this->json->$name = $value;
+		@$this->json->$name = $value;
 	}
 	
 	public function get($name) {

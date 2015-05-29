@@ -2,14 +2,13 @@
 session_start();
 require 'SPLAutoLoad.php';
 require 'mysqlpass.php';
+require 'Install.php';
 
-use Controller\Page\Index;
 
 $autoload = new SPLAutoLoad();
 $autoload->main();
-if(isset($_GET['page'])) {
-	switch ($_GET['page']) {
-	}
-} else {
-	$index = new Index();
-}
+use Controller\Page\Index;
+
+$install = new Install();
+$install->install();
+$index = new Index();

@@ -15,54 +15,16 @@ class Index extends Base {
 	public function __construct() {
 		$this->args = array();
 		$this->login_panel = new LoginPanel();
-	}
-	
-	public function main() {
 		$this->twig();
-		$this->getArgs();
-		switch ($this->args['action']) {
-			case "show":
-				if(isset($this->args['id']))
-					$this->showPost();
-				else
-					$this->showPosts();	
-			break;
-			case "remove":
-				$this->removePost();
-			break;
-			case "removecom":
-				$this->removeComment();
-				break;
-			case "addpost":
-				$this->addPost();
-			break;
-			case "addcom":
-				$this->addComment();
-			break;
-			case "editpost":
-				$this->editPost();
-			break;
-			case "login":
-				$this->login();
-			break;
-			case "logout":
-				session_unset();
-				session_destroy();
-				header("Location: ?");
-			break;
-			case "register":
-				$this->register();
-			break;
-			default:
-				if(isset($this->args['only']))
-					$this->showPost();
-				else
-					$this->showPosts();
-			break;
-		}
+		if(isset($_SESSION['id'])) {
+			$this->args['sid'] = $_SESSION['id'];
+			$this->args['srank'] = $this->pdo->getUserRank($this->args['sid']);
+			$this->args['sname'] = $this->pdo->getUserName($this->args['sid']);
+		} else
+			$this->args['srank'] = 100;
 	}
 	
-	private function removeComment() {
+	public function removeComment($vars) {
 		if (isset($this->args['only']) && isset($_GET['comid']) && isset($_SESSION['id'])) {
 			if($this->pdo->removeComment($_GET['comid'])) {
 				header("refresh: 2;url=?action=show&only=".$this->args['only']);
@@ -89,7 +51,7 @@ class Index extends Base {
 		}
 	}
 	
-	private function addComment() {
+	public function addComment($vars) {
 		if (isset($_POST['text']) && isset($this->args['only']) && isset($_SESSION['id'])) {
 			if($this->pdo->addComment(new \Model\Comment(null, $_POST['text'], $_SESSION['id'], null, $this->args['only'], null))) {
 				header("Location: ?action=show&only=".$this->args['only']);
@@ -112,7 +74,7 @@ class Index extends Base {
 		}
 	}
 	
-	private function removePost() {
+	public function removePost($vars) {
 		if (isset($this->args['id']) && isset($_SESSION['id'])) {
 			if($this->pdo->removePost($this->args['id'])) {
 				header("refresh: 2;url=?");
@@ -139,7 +101,7 @@ class Index extends Base {
 		}
 	}
 	
-	private function addPost() {
+	public function addPost($vars) {
 		if (isset($_POST['title']) && isset($_POST['text']) && isset($_SESSION['id'])) {
 			if($this->pdo->addPost(new \Model\Post(null, $_POST['title'], $_POST['text'], null, $_SESSION['id']))) {
 				header("Location: ?");
@@ -162,7 +124,7 @@ class Index extends Base {
 		}
 	}
 	
-	private function editPost() {
+	public function editPost($vars) {
 		if (isset($_POST['title']) && isset($_POST['text']) && isset($this->args['only']) && isset($_SESSION['id'])) {
 			if($this->pdo->editPost(new \Model\Post(null, $_POST['title'], $_POST['text'], null, $_SESSION['id']))) {
 				header("Location: ?action=show&only=".$this->args['only']);
@@ -187,24 +149,25 @@ class Index extends Base {
 		}
 	}
 	
-	private function showPosts() {
+	public function showPosts($vars) {
 		echo $this->twig->render('Index.html.twig', array(
 			"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
-			"main_page" => $this->pdo->getPosts($this->args['order']),
+			"main_page" => $this->pdo->getPosts($vars),
+			"rank" => $this->args['srank'],
 			"login_panel" => $this->login_panel->getData($this->args['sname'])
 		));
 	}
 	
-	private function showPost() {
+	public function showPost($vars) {
 		echo $this->twig->render('Index.html.twig', array(
 				"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
-				"post" => $this->pdo->getPost($this->args['only']),
+				"post" => $this->pdo->getPost($vars),
 				"rank" => $this->args['srank'],
 				"login_panel" => $this->login_panel->getData($this->args['sname'])
 		));
 	}
 	
-	private function login() {
+	public function login($vars) {
 		if (isset($_POST['nick']) && isset($_POST['password']) && !isset($_SESSION['id'])) {
 			$login = $this->pdo->loginUser($_POST['nick'], $_POST['password']);
 			if($login==0) {
@@ -240,7 +203,7 @@ class Index extends Base {
 		}
 	}
 	
-	private function register() {
+	public function register($vars) {
 		if (isset($_POST['nick']) && isset($_POST['password']) && isset($_POST['password2']) 
 				&& isset($_POST['email']) && !isset($_SESSION['id'])) {	
 			if($_POST['password']!=$_POST['password2']) {
@@ -285,21 +248,5 @@ class Index extends Base {
 					"login_panel" => $this->login_panel->getData($this->args['sname'])
 			));
 		}
-	}
-	
-	private function getArgs() {
-		$uri = $_SERVER["REQUEST_URI"];
-		$url = explode("/", $uri);
-		if(isset($url[1])) 
-			$this->args['action'] = $url[1];
-		if(isset($url[2]))
-			$this->args['id'] = $url[2];
-		if(isset($_SESSION['id'])) {
-			$this->args['sid'] = $_SESSION['id'];
-			$this->args['srank'] = $this->pdo->getUserRank($this->args['sid']);
-			$this->args['sname'] = $this->pdo->getUserName($this->args['sid']);
-		} else
-			$this->args['srank'] = 100;
-		
 	}
 }
