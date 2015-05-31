@@ -13,8 +13,9 @@ class Install {
 		$json->open("config.json");
 		
 		$routings = array();
-		$routings['showPost'] = '/^\/post\/[0-9]+$/D';
-		$routings['showPosts'] = '/^\/show\/[a-z]+$/D';
+		$routings['showPost'] = '/post/{id}';
+		$routings['modifyPost'] = '/post/{action}/{id}';
+		$routings['showPosts'] = '/show/{order}';
 		
 		$json->put("routings", $routings);
 		$json->save();
