@@ -152,7 +152,7 @@ class Index extends Base {
 	public function showPosts($vars) {
 		echo $this->twig->render('Index.html.twig', array(
 			"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
-			"main_page" => $this->pdo->getPosts($vars),
+			"main_page" => $this->pdo->getPosts($vars['order']),
 			"rank" => $this->args['srank'],
 			"login_panel" => $this->login_panel->getData($this->args['sname'])
 		));

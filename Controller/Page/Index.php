@@ -19,6 +19,7 @@ class Index {
 		foreach ($routings as $rout => $value) {
 			if($router->match($value,$uri)) {
 				$ctrl->$rout($router->vars);
+				break;
 			}
 		}
 	}
