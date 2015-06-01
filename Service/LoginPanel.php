@@ -1,9 +1,7 @@
 <?php
-namespace Model;
+namespace Service;
 
-use Model\Base;
-
-class LoginPanel extends Base {
+class LoginPanel {
 	
 	public function getData($userName) {
 		if(isset($_SESSION['id'])) {

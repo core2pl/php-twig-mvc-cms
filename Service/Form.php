@@ -1,9 +1,8 @@
 <?php
-namespace Model;
+namespace Service;
 
-use \Model\Base;
 
-class Form extends \Model\Base {
+class Form {
 
 	public $inputs,$action,$method,$style,$class;
 	
@@ -27,5 +26,6 @@ class Form extends \Model\Base {
 		$input->style = $style;
 		$input->titleStyle = $titleStyle;
 		$this->inputs[] = $input;
+		return $this;
 	}
 }
