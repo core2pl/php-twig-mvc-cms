@@ -2,8 +2,7 @@
 namespace Controller;
 
 use Controller\Base;
-use Model\Test as Test;
-use Model\LoginPanel as LoginPanel;
+use Service\LoginPanel as LoginPanel;
 use Model\User as User;
 use Model\Menu as Menu;
 
@@ -13,7 +12,6 @@ class Index extends Base {
 	private $login_panel;
 	
 	public function __construct() {
-		$this->args = array();
 		$this->login_panel = new LoginPanel();
 		$this->twig();
 		if(isset($_SESSION['id'])) {
@@ -52,101 +50,7 @@ class Index extends Base {
 	}
 	
 	public function addComment($vars) {
-		if (isset($_POST['text']) && isset($this->args['only']) && isset($_SESSION['id'])) {
-			if($this->pdo->addComment(new \Model\Comment(null, $_POST['text'], $_SESSION['id'], null, $this->args['only'], null))) {
-				header("Location: ?action=show&only=".$this->args['only']);
-			} else {
-				echo $this->twig->render('Index.html.twig', array(
-						"menus_left" => $this->menu->makeMenu("left"),
-						"message" => "Wystąpił błąd!",
-						"login_panel" => $this->login_panel->getData($this->args['sname'])
-				));
-			}
-		} else {
-			$form = new \Model\Form("?action=addpost", "POST", "center", "width: 100%");
-			$form->addInput("input","text", "title", "Tytuł");
-			$form->addInput("textarea","text", "text", "Tekst");
-			echo $this->twig->render('Index.html.twig', array(
-					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
-					"form" => $form,
-					"login_panel" => $this->login_panel->getData($this->args['sname'])
-			));
-		}
-	}
-	
-	public function removePost($vars) {
-		if (isset($this->args['id']) && isset($_SESSION['id'])) {
-			if($this->pdo->removePost($this->args['id'])) {
-				header("refresh: 2;url=?");
-				echo $this->twig->render('Index.html.twig', array(
-						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
-						"message" => "Post usunięto pomyślnie!",
-						"login_panel" => $this->login_panel->getData($this->args['sname'])
-				));
-			} else {
-				header("refresh: 2;url=?");
-				echo $this->twig->render('Index.html.twig', array(
-						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
-						"message" => "Wystąpił błąd!",
-						"login_panel" => $this->login_panel->getData($this->args['sname'])
-				));
-			}
-		} else {
-			header("refresh: 2;url=?");
-			echo $this->twig->render('Index.html.twig', array(
-					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
-					"message" => "Wystąpił błąd!",
-					"login_panel" => $this->login_panel->getData($this->args['sname'])
-			));
-		}
-	}
-	
-	public function addPost($vars) {
-		if (isset($_POST['title']) && isset($_POST['text']) && isset($_SESSION['id'])) {
-			if($this->pdo->addPost(new \Model\Post(null, $_POST['title'], $_POST['text'], null, $_SESSION['id']))) {
-				header("Location: ?");
-			} else {
-				echo $this->twig->render('Index.html.twig', array(
-						"menus_left" => $this->menu->makeMenu("left"),
-						"message" => "Wystąpił błąd!",
-						"login_panel" => $this->login_panel->getData($this->args['sname'])
-				));
-			}
-		} else {
-			$form = new \Model\Form("?action=addpost", "POST", "center", "width: 100%");
-			$form->addInput("input","text", "title", "Tytuł");
-			$form->addInput("textarea","text", "text", "Tekst");
-			echo $this->twig->render('Index.html.twig', array(
-					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
-					"form" => $form,
-					"login_panel" => $this->login_panel->getData($this->args['sname'])
-			));
-		}
-	}
-	
-	public function editPost($vars) {
-		if (isset($_POST['title']) && isset($_POST['text']) && isset($this->args['only']) && isset($_SESSION['id'])) {
-			if($this->pdo->editPost(new \Model\Post(null, $_POST['title'], $_POST['text'], null, $_SESSION['id']))) {
-				header("Location: ?action=show&only=".$this->args['only']);
-			} else {
-				header("refresh:2;url=?action=editpost&only=".$this->args['only']);
-				echo $this->twig->render('Index.html.twig', array(
-						"menus_left" => $this->menu->makeMenu("left"),
-						"message" => "Wystąpił błąd!",
-						"login_panel" => $this->login_panel->getData($this->args['sname'])
-				));
-			}
-		} else {
-			$value = $this->pdo->getPost($this->args['only']);
-			$form = new \Model\Form("?action=editpost&only=".$this->args['only'], "POST", "center", "width: 100%");
-			$form->addInput("input","text", "title", "Tytuł", $value->getTitle());
-			$form->addInput("textarea","text", "text", "Tekst", $value->getText());
-			echo $this->twig->render('Index.html.twig', array(
-					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
-					"form" => $form,
-					"login_panel" => $this->login_panel->getData($this->args['sname'])
-			));
-		}
+		
 	}
 	
 	public function showPosts($vars) {
@@ -165,6 +69,113 @@ class Index extends Base {
 				"rank" => $this->args['srank'],
 				"login_panel" => $this->login_panel->getData($this->args['sname'])
 		));
+	}
+	
+	public function modifyComment($vars) {
+		switch ($vars['action']) {
+			case 'add':
+				if (isset($_POST['text']) && isset($this->args['only']) && isset($_SESSION['id'])) {
+					if($this->pdo->addComment(new \Model\Comment(null, $_POST['text'], $_SESSION['id'], null, $this->args['only'], null))) {
+						header("Location: ?action=show&only=".$this->args['only']);
+					} else {
+						echo $this->twig->render('Index.html.twig', array(
+								"menus_left" => $this->menu->makeMenu("left"),
+								"message" => "Wystąpił błąd!",
+								"login_panel" => $this->login_panel->getData($this->args['sname'])
+						));
+					}
+				} else {
+					$form = new \Model\Form("?action=addpost", "POST", "center", "width: 100%");
+					$form->addInput("input","text", "title", "Tytuł");
+					$form->addInput("textarea","text", "text", "Tekst");
+					echo $this->twig->render('Index.html.twig', array(
+							"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+							"form" => $form,
+							"login_panel" => $this->login_panel->getData($this->args['sname'])
+					));
+				}
+			break;
+		}
+	}
+	
+	public function modifyPost($vars) {
+		switch ($vars['action']) {
+			case 'remove':
+				if (isset($this->vars['id']) && isset($_SESSION['id'])) {
+					if($this->pdo->removePost($this->$vars['id'])) {
+						header("refresh: 2;url=/");
+						echo $this->twig->render('Index.html.twig', array(
+								"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+								"message" => "Post usunięto pomyślnie!",
+								"login_panel" => $this->login_panel->getData($this->args['sname'])
+						));
+					} else {
+						header("refresh: 2;url=/");
+						echo $this->twig->render('Index.html.twig', array(
+								"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+								"message" => "Wystąpił błąd!",
+								"login_panel" => $this->login_panel->getData($this->args['sname'])
+						));
+					}
+				} else {
+					header("refresh: 2;url=/");
+					echo $this->twig->render('Index.html.twig', array(
+							"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+							"message" => "Wystąpił błąd!",
+							"login_panel" => $this->login_panel->getData($this->args['sname'])
+					));
+				}
+			break;
+			case 'add':
+				if (isset($_POST['title']) && isset($_POST['text']) && isset($_SESSION['id'])) {
+					if($this->pdo->addPost(new \Model\Post(null, $_POST['title'], $_POST['text'], null, $_SESSION['id']))) {
+						header("Location: /");
+					} else {
+						echo $this->twig->render('Index.html.twig', array(
+								"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+								"message" => "Wystąpił błąd!",
+								"login_panel" => $this->login_panel->getData($this->args['sname'])
+						));
+					}
+				} else {
+					$form = new \Model\Form("?action=addpost", "POST", "center", "width: 100%");
+					$form->addInput("input","text", "title", "Tytuł");
+					$form->addInput("textarea","text", "text", "Tekst");
+					echo $this->twig->render('Index.html.twig', array(
+							"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+							"form" => $form,
+							"login_panel" => $this->login_panel->getData($this->args['sname'])
+					));
+				}
+			break;
+			case 'edit':
+				if (isset($_POST['title']) && isset($_POST['text']) && isset($this->vars['id']) && isset($_SESSION['id'])) {
+					if($this->pdo->editPost(new \Model\Post(null, $_POST['title'], $_POST['text'], null, $_SESSION['id']))) {
+						header("Location: ?action=show&only=".$this->vars['id']);
+					} else {
+						header("refresh:2;url=?action=editpost&only=".$this->vars['id']);
+						echo $this->twig->render('Index.html.twig', array(
+								"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+								"message" => "Wystąpił błąd!",
+								"login_panel" => $this->login_panel->getData($this->args['sname'])
+						));
+					}
+				} else {
+					$value = $this->pdo->getPost($this->vars['id']);
+					$form = new \Model\Form("?action=editpost&only=".$this->vars['id'], "POST", "center", "width: 100%");
+					$form->addInput("input","text", "title", "Tytuł", $value->getTitle());
+					$form->addInput("textarea","text", "text", "Tekst", $value->getText());
+					echo $this->twig->render('Index.html.twig', array(
+							"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+							"form" => $form,
+							"login_panel" => $this->login_panel->getData($this->args['sname'])
+					));
+				}
+			break;
+			default:
+				header("Location: /");
+			break;
+		}
 	}
 	
 	public function login($vars) {
