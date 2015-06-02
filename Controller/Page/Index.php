@@ -15,12 +15,16 @@ class Index {
 		$json->open("config.json");
 		$routings = $json->get("routings");
 		$uri = $_SERVER["REQUEST_URI"];
-		
+		$found = false;
 		foreach ($routings as $rout => $value) {
 			if($router->match($value,$uri)) {
 				$ctrl->$rout($router->vars);
+				$found = true;
 				break;
 			}
 		}
-	}
+		if(!$found) {
+			$ctrl->showPosts(array('order' => 'date'));
+		}
+	} 
 }

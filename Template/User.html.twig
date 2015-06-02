@@ -1,0 +1,17 @@
+<div class="page_block">
+<div class='user_nick'>{{ user.nick }}</div>
+<div class='user_email'>{{ user.email }}</div>
+{% if rank == 1 %}
+	<script>function delete_user() {
+				if(!) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+	</script>
+	<form action="/user/remove/{{ user.id }}" method="POST" onsubmit='return confirm("Czy na pewno chcesz usunąć tego użytkownika?");'>
+		<input type="submit" value="Usuń użytkownika">
+	</form>
+{% endif %}
+</div>

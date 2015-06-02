@@ -7,14 +7,14 @@ class LoginPanel {
 		if(isset($_SESSION['id'])) {
 			$return = (object) null;
 			$return->logged = $this->isLogged();
-			$return->user_panel = "?page=user&action=panel";
+			$return->user_panel = "/user/panel";
 			$return->user = $userName;
-			$return->logout = "?action=logout";
+			$return->logout = "/logout";
 		} else {
 			$return = (object) null;
 			$return->logged = $this->isLogged();
-			$return->register = "?action=register";
-			$return->login = "?action=login";
+			$return->register = "/register";
+			$return->login = "/login";
 		}
 		return $return;
 	}

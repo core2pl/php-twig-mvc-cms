@@ -46,29 +46,36 @@
 		{% include 'Form.html.twig' %}
 	{% elseif main_page is defined %}
 		<div class="page_block" style="min-height: 50px;">
-		<div style="display: inline-block; float: left;">Sortowanie: <form method="GET">
-		<input type="hidden" name="action" value="show" /><select name="order" onchange="move(this.value)">
-		<option value="date">Data</option><option value="title">Tytuł</option><option value="text">Tekst</option><option value="author">Autor</option>
+		<div style="display: inline-block; float: left;">Sortowanie: <form action="/show" method="POST">
+		<select name="order" onchange="location.replace('/show/'+this.value)">
+		<option value="date">Data</option>
+		<option value="title">Tytuł</option>
+		<option value="text">Tekst</option>
+		<option value="author">Autor</option>
 		</select><input type="submit" value="Wybierz"></form></div></div>
 		{% for post in main_page %}
 			<div class="page_block">
-				<div class="post_author">Autor: <a href="?page=user&user={{ post.authorid }}&action=show">{{ post.author }}</a></div>
-				<div class="post_date"><a href="?action=show&only={{ post.id }}">{{ post.date }}</a></div></br>
-				<div class="post_title"><a href="?action=show&only={{ post.id }}"><h2>{{ post.title }}</h2></a></div></br>
+				<div class="post_author">Autor: <a href="/user/show/{{ post.authorid }}">{{ post.author }}</a></div>
+				<div class="post_date"><a href="/post/{{ post.id }}">{{ post.date }}</a></div></br>
+				<div class="post_title"><a href="/post/{{ post.id }}"><h2>{{ post.title }}</h2></a></div></br>
 				{{ post.text|raw }}</br>
-				<div class='post_footer'><a href="?action=editpost&only={{ post.id }}">Edytuj</a>
+				{% if rank == 1 %}
+				<div class='post_footer'><a href="/post/edit/{{ post.id }}">Edytuj</a>
 				<script>function deletes(postid) {
 							if(!confirm("Czy na pewno chcesz usunąć ten post?")) {
 							} else {
-								location.replace("?action=remove&id="+postid);
+								location.replace("/post/remove/"+postid);
 							}
 						}
 				</script>
 				<a href="javascript:deletes('{{ post.id }}');">Usuń</a></div>
+				{% endif %}
 			</div>
 		{% endfor %}
 	{% elseif post is defined %}
 		{% include 'Post.html.twig' %}
+	{% elseif user is defined %}
+		{% include 'User.html.twig' %}
 	{% endif %}
 	</div>
 {% endblock %}

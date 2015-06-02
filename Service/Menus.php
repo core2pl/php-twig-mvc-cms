@@ -22,11 +22,11 @@ class Menus {
 		switch ($position) {
 			case "left":
 				$menu = new Menu("Menu główne");
-				$menu->addItem("Strona główna","?");
+				$menu->addItem("Strona główna","/");
 				$menu_left[] = $menu->renderMenu();
 				if($rank<=1) {
 					$admin_menu = new Menu("Menu Admina");
-					$admin_menu->addItem("Dodaj post", "?action=addpost");
+					$admin_menu->addItem("Dodaj post", "/post/add/0");
 					$menu_left[] = $admin_menu->renderMenu();
 				}
 				return $menu_left;
