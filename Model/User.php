@@ -5,7 +5,7 @@ use \Model\Base as Base;
 
 class User extends Base {
 	
-	private $id,$nick,$email,$lvl,$last,$rank,$online;
+	private $id,$nick,$email,$lvl,$last,$rank;
 	
 	public function __construct($id,$nick,$email,$lvl,$lastLogin,$rank) {
 		$this->id = $id;
@@ -14,14 +14,6 @@ class User extends Base {
 		$this->lvl = $lvl;
 		$this->last = $lastLogin;
 		$this->rank = $rank;
-		$now = new DateTime();
-		$date = new DateTime($user->getLastLogin());
-		$diff = $date->diff($now);
-		if($diff->format("%y%m%d%h%i%s")>30) {
-			$this->online = false;
-		} else {
-			$this->online = true;
-		}
 	}
 	
 	public function getId() {
@@ -70,5 +62,16 @@ class User extends Base {
 	
 	public function setRank($rank) {
 		$this->rank = $rank;
+	}
+	
+	public function getStatus() {
+		$now = new \DateTime();
+		$date = new \DateTime($this->getLastLogin());
+		$diff = $date->diff($now);
+		if($diff->format("%y%m%d%h%i%s")>30) {
+			return "Offline";
+		} else {
+			return "Online";
+		}
 	}
 }

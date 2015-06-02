@@ -76,6 +76,8 @@
 		{% include 'Post.html.twig' %}
 	{% elseif user is defined %}
 		{% include 'User.html.twig' %}
+	{% elseif table is defined %}
+		{% include 'Table.html.twig' %}
 	{% endif %}
 	</div>
 {% endblock %}

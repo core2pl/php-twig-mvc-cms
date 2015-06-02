@@ -5,6 +5,7 @@ use Controller\Base;
 use Service\LoginPanel as LoginPanel;
 use Model\User as User;
 use Model\Menu as Menu;
+use Service\Table;
 
 class Index extends Base {
 	
@@ -324,18 +325,12 @@ class Index extends Base {
 			break;
 			case "list":
 				$users = $this->pdo->listUsers();
+				$table = new \Service\Table();
+				$table->addRow("Użytkownik","Status");
 				foreach ($users as $user) {
-					$now = new DateTime();
-					$date = new DateTime($user->getLastLogin());
-					$diff = $date->diff($now);
-					//$page .= "<div style='margin-bottom: 10px;'><div style=\"float: left;\"><a href=\"/user/show/".$user->."\">".$users[$i][1]."</a></div>";
-					if($diff->format("%y%m%d%h%i%s")>30) {
-						$page .= "<div style='float: right; color: #cf2f35;'>Offline</div>";
-					} else {
-						$page .= "<div style='float: right; color: #35cf2f;'>Online</div>";
-					}
-					$page .="</br>";
-					$page .= "<script>function load_users() {
+					$table->addRow($user->getNick(),$user->getStatus());
+				}
+				$js = "function load_users() {
 							var xmlhttp=new XMLHttpRequest();
 							xmlhttp.onreadystatechange=function() {
 								if(xmlhttp.readyState==4 && xmlhttp.status==200) {
@@ -344,8 +339,13 @@ class Index extends Base {
 							}
 							xmlhttp.open(\"GET\",\"ajax.php?list=y\",true);
 							xmlhttp.send();
-							} window.setInterval(load_users, 30000);</script>";
-				}
+							} window.setInterval(load_users, 30000);";
+				$table->setJs($js);
+				echo $this->twig->render('Index.html.twig', array(
+						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
+						"table" => $table,
+						"login_panel" => $this->login_panel->getData($this->args['sname'])
+				));
 			break;
 		}
 	}

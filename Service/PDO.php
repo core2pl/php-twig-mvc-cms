@@ -286,10 +286,10 @@ class PDO {
 	
 	function listUsers() {
 		try {
-			$query = $dbcon->prepare("SELECT id,nick,last_login FROM $this->prefix"."_users");
+			$query = $this->dbcon->prepare("SELECT id,nick,last_login FROM $this->prefix"."_users");
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
-			$dbcon = null;
+			$this->dbcon = null;
 			if(!empty($fetch)) {
 				$return = array();
 				foreach ($fetch as $user) {
@@ -309,9 +309,9 @@ class PDO {
 			$server = MYSQL_SERVER;
 			$database = MYSQL_DATABASE;
 			$prefix = MYSQL_PREFIX;
-			$dbcon = new PDO("mysql:host=$server;dbname=$database", MYSQL_LOGIN, MYSQL_PASSWORD);
-			$dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$query = $dbcon->prepare("UPDATE $prefix"."_users SET nick = :newnick, email = :newemail, rank=:newrank, lvl=:newlvl WHERE id = :id");
+			$this->dbcon = new PDO("mysql:host=$server;dbname=$database", MYSQL_LOGIN, MYSQL_PASSWORD);
+			$this->dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$query = $this->dbcon->prepare("UPDATE $prefix"."_users SET nick = :newnick, email = :newemail, rank=:newrank, lvl=:newlvl WHERE id = :id");
 			$query->bindValue(":newnick",$user->getNick());
 			$query->bindValue(":newemail",$user->getEmail());
 			$query->bindValue(":newrank",$user->getRank());
@@ -319,7 +319,7 @@ class PDO {
 			$query->bindValue(":id",$user->getId());
 			$query->execute();
 			$fetch=$query->rowCount();
-			$dbcon = null;
+			$this->dbcon = null;
 			if($fetch==1) {
 				return true;
 			} else {
@@ -334,7 +334,7 @@ class PDO {
 		try {
 			$salt = uniqid(mt_rand(), true);
 			$password = hash('sha256', $salt . $_POST['pass1']);
-			$query = $dbcon->prepare("UPDATE $this->prefix"."_users SET password = :pass, salt = :salt WHERE id = :id");
+			$query = $this->dbcon->prepare("UPDATE $this->prefix"."_users SET password = :pass, salt = :salt WHERE id = :id");
 			$query -> bindValue(":pass", $password);
 			$query -> bindValue(":salt", $salt);
 			$query->bindValue(":id",$id);
@@ -356,7 +356,7 @@ class PDO {
 			$query->bindValue(":nick",$nick);
 			$query->execute();
 			$fetch=$query->fetch();
-			$dbcon = null;
+			$this->dbcon = null;
 			if(!empty($fetch)) {
 				$password = $fetch['password'];
 				$salt = $fetch['salt'];

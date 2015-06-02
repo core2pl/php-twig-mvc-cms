@@ -1,0 +1,11 @@
+<div class="page_block">
+<script>{{ table.js }}</script>
+<div id='table'>
+<table style='width: 100%;'>
+	{% for row in table.rows %}
+		<tr>
+			<td>{{ row.value1 }}</td><td>{{ row.value2 }}</td>
+		</tr>
+	{% endfor %}
+</table>
+</div></div>
