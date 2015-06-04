@@ -197,3 +197,12 @@ form textarea {
 .input_title {
 	width: 200px;
 }
+
+.user_nick {
+	font-size: 26px;
+	font-weight: bold;
+}
+
+.user_email {
+	font-size: 14px;
+}

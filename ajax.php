@@ -1,6 +1,7 @@
 <?php
-session_start();
-if(isset($_POST['online']) && isset($_SESSION['id'])) {
+require 'mysqlpass.php';
+require 'Service/PDO.php';
+if(/*isset($_POST['online']) && isset($_SESSION['id'])*/true) {
 	$pdo = new \Service\PDO();
 	$pdo->setLastLogin($_SESSION['id']);
 }

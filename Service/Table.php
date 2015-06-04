@@ -3,7 +3,7 @@ namespace Service;
 
 class Table {
 
-	public $rows,$js;
+	public $rows,$js,$row=0;
 	
 	public function __construct() {
 		$rows = array();
@@ -14,8 +14,17 @@ class Table {
 		$this->js = $js;
 	}
 	
-	public function addRow($value1,$value2) {
-		$this->rows[] = array("value1" => $value1, "value2" => $value2);
+	
+	public function addCell($text,$color,$href) {
+		$obj = (object)null;
+		$obj->text = $text;
+		$obj->color = $color;
+		$obj->href = $href;
+		$this->rows[$this->row][] = $obj;  
+	}
+	
+	public function nextRow() {
+		$this->row++;
 	}
 	
 }

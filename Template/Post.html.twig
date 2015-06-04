@@ -3,6 +3,7 @@
 	<div class="post_date"><a href="/post/{{ post.id }}">{{ post.date }}</a></div></br>
 	<div class="post_title"><a href="/post/{{ post.id }}"><h2>{{ post.title }}</h2></a></div></br>
 	{{ post.text|raw }}</br>
+	{% if rank == 1 %}
 	<div class='post_footer'><a href="/post/edit/{{ post.id }}">Edytuj</a>
 	<script>function deletes(postid) {
 				if(!confirm("Czy na pewno chcesz usunąć ten post?")) {
@@ -12,6 +13,7 @@
 			}
 	</script>
 	<a href="javascript:deletes('{{ post.id }}');">Usuń</a></div>
+	{% endif %}
 	</br><div style='color: #3a95d1; font-size: 25px;'>Komentarze: </div></br>
 	{% if login_panel.user is defined %}
 	<script>function check() {

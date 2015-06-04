@@ -16,11 +16,18 @@ class Index extends Base {
 		$this->login_panel = new LoginPanel();
 		$this->twig();
 		if(isset($_SESSION['id'])) {
+			if(!$this->pdo->userExists($_SESSION['id'])) {
+				$this->logout();
+				return;
+			}
+			$this->pdo->setLastLogin($_SESSION['id']);
 			$this->args['sid'] = $_SESSION['id'];
 			$this->args['srank'] = $this->pdo->getUserRank($this->args['sid']);
 			$this->args['sname'] = $this->pdo->getUserName($this->args['sid']);
 		} else
-			$this->args['srank'] = 100;
+			$this->args['srank'] = 3;
+		
+		
 	}
 	
 	public function showPosts($vars) {
@@ -197,6 +204,7 @@ class Index extends Base {
 			if($login==0) {
 				header("Location: /");
 			} else if($login==1) {
+				header("refresh:2;url=/login");
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Złe hasło!",
@@ -204,6 +212,7 @@ class Index extends Base {
 						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
 			} else if($login==2) {
+				header("refresh:2;url=/login");
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"message" => "Zły login!",
@@ -212,6 +221,7 @@ class Index extends Base {
 				));
 			}
 		} else if(isset($_SESSION['id'])) {
+			header("refresh:2;url=/");
 			echo $this->twig->render('Index.html.twig', array(
 					"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 					"message" => "Jesteś już zalogowany!",
@@ -290,6 +300,10 @@ class Index extends Base {
 		}
 	}
 	
+	public function users($vars) {
+		$this->user($vars);
+	} 
+	
 	public function user($vars) {
 		switch ($vars['action']) {
 			case "show":
@@ -302,7 +316,7 @@ class Index extends Base {
 			break;
 			case "remove":
 				if(isset($_SESSION['id']) && $this->args['srank'] == 1) {
-					if($this->pdo->removeUser($vars['id'])) {
+					if($this->pdo->removeUser($_POST['id'])) {
 						header("refresh:2;url=/");
 						echo $this->twig->render('Index.html.twig', array(
 								"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
@@ -326,26 +340,47 @@ class Index extends Base {
 			case "list":
 				$users = $this->pdo->listUsers();
 				$table = new \Service\Table();
-				$table->addRow("Użytkownik","Status");
+				$table->addCell("Użytkownik", "black", null);
+				$table->addCell("Status", "black", null);
+				$table->nextRow();
 				foreach ($users as $user) {
-					$table->addRow($user->getNick(),$user->getStatus());
+					$table->addCell($user->getNick(),"black","/user/show/".$user->getId());
+					if($user->getStatus()=="Online")
+						$table->addCell($user->getStatus(), "green", null);
+					else
+						$table->addCell($user->getStatus(), "red", null);
+					$table->nextRow();
 				}
-				$js = "function load_users() {
-							var xmlhttp=new XMLHttpRequest();
-							xmlhttp.onreadystatechange=function() {
-								if(xmlhttp.readyState==4 && xmlhttp.status==200) {
-									document.getElementById(\"main_page\").innerHTML=xmlhttp.responseText;
-								}
-							}
-							xmlhttp.open(\"GET\",\"ajax.php?list=y\",true);
-							xmlhttp.send();
-							} window.setInterval(load_users, 30000);";
-				$table->setJs($js);
+				
 				echo $this->twig->render('Index.html.twig', array(
 						"menus_left" => $this->menu->makeMenu("left",$this->args['srank']),
 						"table" => $table,
 						"login_panel" => $this->login_panel->getData($this->args['sname'])
 				));
+			break;
+			case "change_data":
+				if(isset($_SESSION['id'])) {
+					if($_POST['id']==$_SESSION['id']) {
+						if($this->pdo->changeUserPassword($_POST['id'],$_POST['password'])) {
+							session_unset();
+							session_destroy();
+							header("refresh:2;url=/");
+							echo $this->twig->render('Index.html.twig', array(
+									"menus_left" => $this->menu->makeMenu("left", $this->args['srank']),
+									"message" => "Hasło zmieniono pomyślnie. Teraz nastąpi wylogowanie.",
+									"login_panel" => $this->login_panel->getData($this->args['sname'])	
+							));
+						} else {
+							header("refresh:2;url=/");
+							echo $this->twig->render('Index.html.twig', array(
+									"menus_left" => $this->menu->makeMenu("left", $this->args['srank']),
+									"message" => "Wystąpił błąd!",
+									"login_panel" => $this->login_panel->getData($this->args['sname'])
+							));
+						}
+					}
+				} 
+				header("Location: /");
 			break;
 		}
 	}

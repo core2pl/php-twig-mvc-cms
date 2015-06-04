@@ -4,7 +4,15 @@
 <table style='width: 100%;'>
 	{% for row in table.rows %}
 		<tr>
-			<td>{{ row.value1 }}</td><td>{{ row.value2 }}</td>
+			{% for cell in row %}
+				<td style="color: {{ cell.color }}">
+					{% if cell.href %}
+						<a href="{{ cell.href }}">{{ cell.text }}</a>
+					{% else %}
+						{{ cell.text }}
+					{% endif %}	
+				</td>
+			{% endfor %}
 		</tr>
 	{% endfor %}
 </table>

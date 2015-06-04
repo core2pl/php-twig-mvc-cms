@@ -1,17 +1,21 @@
 <div class="page_block">
 <div class='user_nick'>{{ user.nick }}</div>
 <div class='user_email'>{{ user.email }}</div>
+{% if login_panel.user == user.nick %}
+	</br></br>
+	<form action="/user/change_data" method="POST">
+		Podaj nowe hasło:
+		<input type="password" name="password"></br>
+		<input type="hidden" name="id" value="{{ user.id }}">
+		<input type="submit" value="Zmień hasło">
+	</form>
+{% endif %}
 {% if rank == 1 %}
-	<script>function delete_user() {
-				if(!) {
-					return false;
-				} else {
-					return true;
-				}
-			}
-	</script>
-	<form action="/user/remove/{{ user.id }}" method="POST" onsubmit='return confirm("Czy na pewno chcesz usunąć tego użytkownika?");'>
+	<div style="text-align: right"> 
+	<form action="/user/remove" method="POST" onsubmit='return confirm("Czy na pewno chcesz usunąć tego użytkownika?");'>
+		<input type="hidden" name="id" value="{{ user.id }}">
 		<input type="submit" value="Usuń użytkownika">
 	</form>
+	</div>
 {% endif %}
 </div>

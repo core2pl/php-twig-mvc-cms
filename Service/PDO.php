@@ -257,8 +257,8 @@ class PDO {
 			$query = $this->dbcon->prepare("UPDATE ".$this->prefix."_users SET last_login = NOW() WHERE id = :id");
 			$query->bindValue(":id",$userId);
 			$query->execute();
-			$fetch=$query->fetch();
-			if(!empty($fetch)) {
+			$fetch=$query->rowCount();
+			if($fetch==1) {
 				return true;
 			} else {
 				return false;
@@ -330,10 +330,10 @@ class PDO {
 		}
 	}
 	
-	public function changeUserPassword($id) {
+	public function changeUserPassword($id,$pass) {
 		try {
 			$salt = uniqid(mt_rand(), true);
-			$password = hash('sha256', $salt . $_POST['pass1']);
+			$password = hash('sha256', $salt . $pass);
 			$query = $this->dbcon->prepare("UPDATE $this->prefix"."_users SET password = :pass, salt = :salt WHERE id = :id");
 			$query -> bindValue(":pass", $password);
 			$query -> bindValue(":salt", $salt);

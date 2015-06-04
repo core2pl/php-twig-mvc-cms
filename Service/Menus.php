@@ -11,25 +11,48 @@ class Menus {
 	private $menu_footer;
 
 	public function __construct() {
-		$menu_top = array();
-		$menu_left = array();
-		$menu_right = array();
-		$menu_footer = array();
+		$json = new \Service\Json();
+		$json->open("config.json");
+		$this->menu_top = $json->get("menu_top");
+		$this->menu_left = $json->get("menu_left");
+		$this->menu_right = $json->get("menu_right");
+		$this->menu_footer = $json->get("menu_footer");
 	}
 	
 	
 	public function makeMenu($position,$rank) {
 		switch ($position) {
+			case "top":
+				$menu_top = array();
+				foreach ($this->menu_top as $menu) {
+					if($menu->getRank()>=$rank)
+					$menu_top[] = $menu->renderMenu($rank);
+				}
+				return $menu_top;
+			break;
 			case "left":
-				$menu = new Menu("Menu główne");
-				$menu->addItem("Strona główna","/");
-				$menu_left[] = $menu->renderMenu();
-				if($rank<=1) {
-					$admin_menu = new Menu("Menu Admina");
-					$admin_menu->addItem("Dodaj post", "/post/add/0");
-					$menu_left[] = $admin_menu->renderMenu();
+				$menu_left = array();
+				foreach ($this->menu_left as $menu) {
+					if($menu->getRank()>=$rank)
+					$menu_left[] = $menu->renderMenu($rank);
 				}
 				return $menu_left;
+			break;
+			case "right":
+				$menu_right = array();
+				foreach ($this->menu_right as $menu) {
+					if($menu->getRank()>=$rank)
+					$menu_right[] = $menu->renderMenu($rank);
+				}
+				return $menu_right;
+			break;
+			case "footer":
+				$menu_footer = array();
+				foreach ($this->menu_footer as $menu) {
+					if($menu->getRank()>=$rank)
+					$menu_footer[] = $menu->renderMenu($rank);
+				}
+				return $menu_footer;
 			break;
 		}
 	}
