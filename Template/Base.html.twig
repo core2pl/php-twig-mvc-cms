@@ -4,8 +4,8 @@
 {% block head %}
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script src="/Js/jquery-1.11.2.min.js"></script>
+<link rel="icon" type="image/png" href="{{ favicon }}">
 <script>
-$('body').css("background","url('background.jpg') no-repeat center center fixed");
 function refresh() {
 	$.ajax({
 
@@ -20,6 +20,11 @@ function refresh() {
 	});
 }
 window.setInterval('refresh()', 20000);</script>
+<style type="text/css">
+body {
+	background: url('{{ background }}') no-repeat center center fixed;
+}
+</style>
 {% endblock %}
 <title>
 {% block title %}{% endblock %}

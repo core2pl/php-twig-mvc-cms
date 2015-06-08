@@ -6,7 +6,7 @@
 			<div style="{{ input.divStyle }}" class="{{ input.divClass }}"><{{ input.html }} type="{{ input.type }}" name="{{ input.name }}">{{ input.value }}</{{ input.html }}></div>
 		{% elseif input.html == "input" %}
 			<div style="{{ input.titleStyle }}" class="{{ input.titleClass }}">{{ input.title|raw }}</div>
-			<div style="{{ input.divStyle }}" class="{{ input.divClass }}"><{{ input.html }} type="{{ input.type }}" name="{{ input.name }}" value="{{ input.value }}"></{{ input.html }}></div>
+			<div style="{{ input.divStyle }}" class="{{ input.divClass }}"><{{ input.html }} type="{{ input.type }}" name="{{ input.name }}" autocomplete="{{ input.auto }}" value="{{ input.value }}"></{{ input.html }}></div>
 		{% elseif input.html == "select" %}
 			<div style="{{ input.titleStyle }}" class="{{ input.titleClass }}">{{ input.title|raw }}</div>
 			<div style="{{ input.divStyle }}" class="{{ input.divClass }}"><{{ input.html }} type="{{ input.type }}" name="{{ input.name }}">

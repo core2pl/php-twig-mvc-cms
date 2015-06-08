@@ -14,11 +14,12 @@ class Form {
 		$this->inputs = array();
 	}
 	
-	public function addInput($html,$type,$name,$title,$value="",$class="",$titleClass="",$style="",$titleStyle="") {
+	public function addInput($html,$type,$name,$title,$autocomplete="off",$value="",$class="",$titleClass="",$style="",$titleStyle="") {
 		$input = (object) null;
 		$input->html = $html;
 		$input->type = $type;
 		$input->name = $name;
+		$input->auto = $autocomplete;
 		$input->value = $value;
 		$input->class = $class;
 		$input->title = $title;

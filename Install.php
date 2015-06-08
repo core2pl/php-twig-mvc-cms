@@ -32,15 +32,20 @@ class Install {
 		$menu->addItem("Strona główna","/",3);
 		$menu->addItem("Użytkownicy","/user/list",2);
 		$menu_left[] = $menu;
+		$about = new Menu("O nas",3);
+		$about->addItem("Autorzy", "/info/author",3);
 		$admin_menu = new Menu("Menu Admina",1);
 		$admin_menu->addItem("Dodaj post", "/post/add/0",1);
 		$admin_menu->addItem("Użytkownicy", "/admin/list",1);
 		$admin_menu->addItem("Edytuj menu", "/admin/edit_menu", 1);
 		$admin_menu->addItem("Zarządzanie stroną", "/admin/panel", 1);
 		$menu_left[] = $admin_menu;
+		$menu_right[] = $about;
 		$json->put("menu_left", $menu_left);
+		$json->put("menu_right", $menu_right);
 		$json->put("title", "Witaj na stronie!");
 		$json->put("background", "/CSS/background.jpg");
+		$json->put("favicon", "");
 		$json->save();
 	}
 }

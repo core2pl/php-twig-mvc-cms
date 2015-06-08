@@ -42,23 +42,32 @@ class Menu extends Base {
 	}
 	
 	public function modifyItem($id, $name, $value) {
-		if($id !=null && $name != null && $value != null) {
-			if(!isset($this->items[$id])) {
-				return false;
-			} else {
-				$this->items[$id]->$name = $value;
-				return true;
-			}
-		} else {
+		if(!isset($this->items[$id])) {
 			return false;
+		} else {
+			$this->items[$id]->$name = $value;
+			return true;
 		}
 	}
 	
-	public function moveItem($id,$menu,$place,$newplace,$newmenu=0) {
-		if(($id || $menu || $place || $newplace || $newmenu) == null ) {
-			return false;
+	public function getItem($id,$name) {
+		return $this->items[$id]->$name;
+	}
+	
+	public function moveItem($id,$newid) {
+		if($newid<sizeof($this->items))
+		if($newid > $id) {
+			$temp = $this->items[$id];
+			for($i = $id; $i < $newid; $i++) {
+				$this->items[$i] = $this->items[$i+1];
+			}
+			$this->items[$newid] = $temp;
 		} else {
-			return true;
+			$temp = $this->items[$id];
+			for($i = $id; $i > $newid; $i--) {
+				$this->items[$i] = $this->items[$i-1];
+			}
+			$this->items[$newid] = $temp;
 		}
 	}
 	
