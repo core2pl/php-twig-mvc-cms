@@ -35,10 +35,12 @@ class Menu extends Base {
 	}
 	
 	public function removeItem($id) {
-		for($i = $id; $i < sizeof($this->items)-1; $i++) {
-			$this->items[$i] = $this->items[$i+1];
+		if($id < sizeof($this->items)) {
+			for($i = $id; $i < sizeof($this->items)-1; $i++) {
+				$this->items[$i] = $this->items[$i+1];
+			}
+			unset($this->items[sizeof($this->items)-1]);
 		}
-		unset($this->items[sizeof($this->items-1)]);
 	}
 	
 	public function modifyItem($id, $name, $value) {

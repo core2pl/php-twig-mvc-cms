@@ -379,13 +379,14 @@ class Index extends Base {
 					if($_POST['place'] == "left" || $_POST['place'] == "right" || $_POST['place'] == "top" || $_POST['place'] == "footer") {
 						$this->json->open("config.json");
 						$menus = $this->json->get("menu_".$_POST['place']);
-						if(isset($menus[$_POST['place']])) {
-							$menu = $this->json->get("menu_".$_POST['place'])[$_POST['id']];
-							if($_POST['type'] == "item") $menu = $this->json->get("menu_".$_POST['place'])[$_POST['menu']];
-						} else {
-							header("refresh:2;url=/admin/edit_menu");
-							echo $this->renderPage("message", "Błędne id menu!");
-							return;
+						if(isset($_POST['id']) || isset($_POST['menu'])) {
+							$menu = $menus[$_POST['id']];
+							if($_POST['type'] == "item") $menu = $menus[$_POST['menu']];
+							if($menu==null) {
+								header("refresh:2;url=/admin/edit_menu");
+								echo $this->renderPage("message", "Błędne id menu!");
+								return;
+							}
 						}
 					} else {
 						header("refresh:2;url=/admin/edit_menu");
@@ -430,7 +431,7 @@ class Index extends Base {
 									header("Location: /admin/edit_menu");
 								}
 							}
-							break;
+						break;
 						case "place":
 							if($_POST['newplace']!=$_POST['place']) {
 								$menus_new = $this->json->get("menu_".$_POST['newplace']);
@@ -448,63 +449,82 @@ class Index extends Base {
 								header("Location: /admin/edit_menu");
 							}
 						break;
+						case "id":
+							switch ($_POST['type']) {
+								case "menu":
+									if($_POST['new_id']!=$_POST['id']) {
+										if($_POST['newid']<sizeof($menus))
+										if($_POST['newid'] > $_POST['id']) {
+											$temp = $menu;
+											for($i = $_POST['id']; $i < $_POST['newid']; $i++) {
+												$menus[$i] = $menus[$i+1];
+											}
+											$menus[$_POST['newid']] = $temp;
+										} else {
+											$temp = $menu;
+											for($i = $_POST['id']; $i > $_POST['newid']; $i--) {
+												$menus[$i] = $menus[$i-1];
+											}
+											$menus[$_POST['newid']] = $temp;
+										}
+									}
+								break;
+								case "item":
+									$menu->moveItem($_POST['id'],$_POST['newid']);
+								break;
+							}
+							$this->json->put("menu_".$_POST['place'],$menus);
+							$this->json->save();
+							header("Location: /admin/edit_menu");
+						break;
+						case "href":
+							if($_POST['type'] == "item") {
+								if($_POST['newhref']!=$menu->getItem($_POST['id'],"value")) {
+									$menu->modifyItem($_POST['id'],"value",$_POST['newhref']);
+									$menus[$_POST['menu']] = $menu;
+									$this->json->put("menu_".$_POST['place'],$menus);
+									$this->json->save();
+									header("Location: /admin/edit_menu");
+								}
+							}
+						break;
 						case "add":
 							switch ($_POST['type']) {
 								case "menu":
 									$menu = new \Model\Menu($_POST['name'], $_POST['rank']);
 									$menus[] = $menu;
-									$this->json->put("menu_".$_POST['place'],$menus);
-									$this->json->save();
-									header("Location: /admin/edit_menu");
 								break;
 								case "item":
 									$menu->addItem($_POST['name'], $_POST['href'], $_POST['rank']);
 									$menus[$_POST['menu']] = $menu;
-									$this->json->put("menu_".$_POST['place'],$menus);
-									$this->json->save();
-									header("Location: /admin/edit_menu");
 								break;
 							}
-						break;
-					}
-					/*if($_POST['type']=="menu") {
-						$this->json->open("config.json");
-						$menus = $this->json->get("menu_".$_POST['place']);
-						$menu = $this->json->get("menu_".$_POST['place'])[$_POST['id']];
-						if($_POST['new_place']!=$_POST['place']) {
-							$menus_new = $this->json->get("menu_".$_POST['new_place']);
-							$menus_new[] = $menus[$_POST['id']];
-							if($_POST['id']<=(sizeof($menus)-1)) {
-								for($i = $_POST['id']; $i < sizeof($menus)-1; $i++) {
-									echo $menus[$i]->renderMenu(1)->name;
-									$menus[$i] = $menus[$i+1];
-								}	
-								unset($menus[sizeof($menus)-1]);
-							}
-							$this->json->put("menu_".$_POST['new_place'],$menus_new);
-							$this->json->save();
 							$this->json->put("menu_".$_POST['place'],$menus);
 							$this->json->save();
 							header("Location: /admin/edit_menu");
-							return;
-						}
-						$menus[$_POST['id']] = $menu;
-						if($_POST['new_id']!=$_POST['id']) {
-							if($_POST['new_id']<sizeof($menus))
-							if($_POST['new_id'] > $_POST['id']) {
-								$temp = $menu;
-								for($i = $_POST['id']; $i < $_POST['new_id']; $i++) {
-									$menus[$i] = $menus[$i+1];
-								}
-								$menus[$_POST['new_id']] = $temp;
-							} else {
-								$temp = $menu;
-								for($i = $_POST['id']; $i > $_POST['new_id']; $i--) {
-									$menus[$i] = $menus[$i-1];
-								}
-								$menus[$_POST['new_id']] = $temp;
+						break;
+						case "remove":
+							switch ($_POST['type']) {
+								case "menu":
+									if($_POST['id']<=(sizeof($menus)-1)) {
+										for($i = $_POST['id']; $i < sizeof($menus)-1; $i++) {
+											echo $menus[$i]->renderMenu(1)->name;
+											$menus[$i] = $menus[$i+1];
+										}
+										unset($menus[sizeof($menus)-1]);
+									}
+								break;
+								case "item":
+									$menu->removeItem($_POST['id']);
+								break;
 							}
-						} 
+							$this->json->put("menu_".$_POST['place'],$menus);
+							$this->json->save();
+							header("Location: /admin/edit_menu");
+						break;
+					}
+					/*if($_POST['type']=="menu") {
+						
 					}
 				} elseif(isset($_POST['remove'])) {
 					if($_POST['type']=="menu") {
@@ -570,6 +590,7 @@ class Index extends Base {
 						$editmenu = (object)null;
 						$editmenu->type = $_POST['type'];
 						$editmenu->id = $_POST['id'];
+						$editmenu->href = $_POST['href'];
 						$editmenu->menu = $_POST['menu']; 
 						$editmenu->place = $_POST['place'];
 						$editmenu->rank = $menu->getItem($_POST['id'], "rank");
