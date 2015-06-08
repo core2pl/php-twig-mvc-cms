@@ -23,6 +23,7 @@ class Menus {
 	public function makeMenu($position,$rank) {
 		switch ($position) {
 			case "top":
+				if(empty($this->menu_top)) return array();
 				$menu_top = array();
 				foreach ($this->menu_top as $menu) {
 					if($menu->getRank()>=$rank)
@@ -31,6 +32,7 @@ class Menus {
 				return $menu_top;
 			break;
 			case "left":
+				if(empty($this->menu_left)) return array();
 				$menu_left = array();
 				foreach ($this->menu_left as $menu) {
 					if($menu->getRank()>=$rank)
@@ -39,6 +41,7 @@ class Menus {
 				return $menu_left;
 			break;
 			case "right":
+				if(empty($this->menu_right)) return array();
 				$menu_right = array();
 				foreach ($this->menu_right as $menu) {
 					if($menu->getRank()>=$rank)
@@ -47,6 +50,7 @@ class Menus {
 				return $menu_right;
 			break;
 			case "footer":
+				if(empty($this->menu_footer)) return array();
 				$menu_footer = array();
 				foreach ($this->menu_footer as $menu) {
 					if($menu->getRank()>=$rank)

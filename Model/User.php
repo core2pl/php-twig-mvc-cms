@@ -22,6 +22,7 @@ class User extends Base {
 	
 	public function setId($id) {
 		$this->id = $id;
+		return $this;
 	}
 	
 	public function getNick() {
@@ -30,6 +31,7 @@ class User extends Base {
 	
 	public function setNick($nick) {
 		$this->nick = $nick;
+		return $this;
 	}
 	
 	public function getEmail() {
@@ -38,6 +40,7 @@ class User extends Base {
 	
 	public function setEmail($email) {
 		$this->email = $email;
+		return $this;
 	}
 	
 	public function getLvl() {
@@ -46,6 +49,7 @@ class User extends Base {
 	
 	public function setLvl($lvl) {
 		$this->lvl = $lvl;
+		return $this;
 	}
 	
 	public function getLastLogin() {
@@ -54,21 +58,41 @@ class User extends Base {
 	
 	public function setLastLogin($lastLogin) {
 		$this->last = $lastLogin;
+		return $this;
 	}
 	
 	public function getRank() {
 		return $this->rank;
 	}
 	
+	public function getRankName() {
+		switch ($this->rank) {
+			case 1:
+				return "Admin";
+			break;
+			case 2:
+				return "Użytkownik";
+			break;
+			case 3:
+				return "Gość";
+			break;
+			case 4:
+				return "Zbanowany";
+			break;
+		}
+		
+	}
+	
 	public function setRank($rank) {
 		$this->rank = $rank;
+		return $this;
 	}
 	
 	public function getStatus() {
 		$now = new \DateTime();
 		$date = new \DateTime($this->getLastLogin());
 		$diff = $date->diff($now);
-		if($diff->format("%y%m%d%h%i%s")>30) {
+		if($diff->format("%Y%M%D%H%I%S")>30) {
 			return "Offline";
 		} else {
 			return "Online";

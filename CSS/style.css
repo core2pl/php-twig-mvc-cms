@@ -32,6 +32,10 @@ body {
 	color: #6091f8;
 }
 
+.header_menu_block:hover a {
+	color: #b8cdf8;
+}
+
 #menu_left {
 	width: 10%;
 	margin: 5px;
@@ -88,6 +92,7 @@ body {
 
 
 #footer {
+	clear: both;
 	width: calc(90% + 10px);
 	margin: 5px;
 	
@@ -205,4 +210,10 @@ form textarea {
 
 .user_email {
 	font-size: 14px;
+}
+
+@media only screen and (max-width : 1080px) {
+	* {
+		font-size:10px;
+	}
 }

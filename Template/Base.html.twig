@@ -5,31 +5,46 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script src="/Js/jquery-1.11.2.min.js"></script>
 <script>
+$('body').css("background","url('background.jpg') no-repeat center center fixed");
 function refresh() {
-	$(function(){
-		$.ajax({
-	
-			url : "/ajax.php",
-			data: "refresh=y",
-			type : "post",
-			success: function(){
-			}
-	
-		});
+	$.ajax({
+
+		url : "/ajax.php",
+		data: {
+			'refresh': true
+		},
+		type : "post",
+		success: function(){
+		}
+
 	});
 }
-window.setInterval(refresh, 2000);</script>
+window.setInterval('refresh()', 20000);</script>
 {% endblock %}
 <title>
 {% block title %}{% endblock %}
 </title>
 </head>
 <body>
+{% if easter is defined %}
+<div id="page" style=" padding-top: 400px;">
+<script type="text/javascript">
+var i=0.2;
+function easter() { 
+	i+=5;
+	$('#page').css("transform","skew("+i+"deg, 0deg)");
+}
+setInterval('easter()', 100); 
+</script>
+{% else %}
 <div id="page">
+{% endif %}
 {% block header %}{% endblock %}
+{% block menu_top %}{% endblock %}
 {% block menu_left %}{% endblock %}
 {% block page %}{% endblock %}
 {% block menu_right %}{% endblock %}
+{% block menu_footer %}{% endblock %}
 {% block footer %}{% endblock %}
 </div>
 </body>

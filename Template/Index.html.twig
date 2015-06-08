@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block title %}
-	{{ text }}
+	{{ title }}
 {% endblock %}
 
 {% block header %}
@@ -15,6 +15,20 @@
 		<div class="header_block" style="text-align: right;"><a href="{{ login_panel.user_panel }}">{{ login_panel.user }}</a> <a href="{{ login_panel.logout }}">Wyloguj</a></div>
 	{% else %}
 		<div class="header_block" style="text-align: right;"><a href="{{ login_panel.register }}">Zarejstruj się</a> <a href="{{ login_panel.login }}">Zaloguj się</a></div>
+	{% endif %}
+{% endblock %}
+
+{% block menu_top %}
+	{% if menus_top %}
+		<div id="menu_top">
+		{% for menu in menus_top %}
+			<div class="header_block" style="padding: 0px">
+				{% for item in menu.items %}
+					<div class="header_menu_block"><a href="{{ item.value }}">{{ item.name }}</a></div>
+				{% endfor %}
+			</div>
+		{% endfor %}
+		</div>
 	{% endif %}
 	</div>
 {% endblock %}
@@ -37,7 +51,11 @@
 {% endblock %}
 
 {% block page %}
-	<div id="main_page">
+	{% if menus_left and menus_right %}
+		<div id="main_page" style="width: calc(69% + 3px)">
+	{% else %}
+		<div id="main_page">
+	{% endif %}
 	{% if message is defined %}
 		<div class="page_block" style="min-height: 50px;">
 		{{ message }}
@@ -77,7 +95,58 @@
 	{% elseif user is defined %}
 		{% include 'User.html.twig' %}
 	{% elseif table is defined %}
+		<div class="page_block">
+		<script>{{ table.js|raw }}</script>
 		{% include 'Table.html.twig' %}
+		</div>
+	{% elseif edit_menu is defined %}
+		<div class="page_block" style="min-height: 50px; font-size:9px;">
+		{% include 'AdminMenu.html.twig' %}
+		{% if edit_menu %}
+			{% if edit_menu.type == "menu" %}
+				<form action="/admin/edit_menu" method="POST">
+				Tytuł menu: {{ edit_menu.name }}</br>
+				Pozycja: {{ edit_menu.place }}</br>
+				Id menu: {{ edit_menu.id }}</br>
+				Ranga menu: {{ edit_menu.rank }}</br>
+				</br>
+				Zmień tytuł:
+				<input type="text" name="name" value="{{ edit_menu.name }}">
+				Zmień pozycję:
+				<input type="text" name="new_place" value="{{ edit_menu.place }}">
+				Zmień Id:
+				<input type="text" name="new_id" value="{{ edit_menu.id }}">
+				Zmień rangę:
+				<input type="text" name="rank" value="{{ edit_menu.rank }}">
+				<input type="hidden" name="place" value="{{ edit_menu.place }}">
+				<input type="hidden" name="type" value="{{ edit_menu.type }}">
+				<input type="hidden" name="id" value="{{ edit_menu.id }}">
+				<input type="hidden" name="edit" value="edit">
+				<input type="submit" value="Wyślij">
+				</form>
+				<form action="/admin/edit_menu" method="POST">
+				<input type="submit" value="Usuń">
+				<input type="hidden" name="place" value="{{ edit_menu.place }}">
+				<input type="hidden" name="type" value="{{ edit_menu.type }}">
+				<input type="hidden" name="id" value="{{ edit_menu.id }}">
+				<input type="hidden" name="remove" value="remove">
+				</form>
+			{% elseif edit_menu.type == "item" %}
+			
+			{% endif %}
+		{% else %}
+			Dodaj:
+			<form action="/admin/edit_menu" method="POST">
+			<select name="type">
+			<option value="menu">Menu</option>
+			<option value="item">Element Menu</option>
+			<option value="widget">Widżet</option>
+			</select>
+			<input type="hidden" name="add" value="add">
+			<input type="submit" value="Wyślij">
+			</form>
+		{% endif %}
+		</div>
 	{% endif %}
 	</div>
 {% endblock %}
@@ -86,7 +155,29 @@
 	{% if menus_right %}
 		<div id="menu_right">
 		{% for menu in menus_right %}
-			<div class="menu_block"></div>
+			<div class="menu_block">
+				<div id="menu_header">
+					{{ menu.title }}
+				</div>
+				{% for item in menu.items %}
+					<a href="{{ item.value }}">{{ item.name }}</a></br>
+				{% endfor %}
+			</div>
+		{% endfor %}
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block menu_footer %}
+	<div id="footer">
+	{% if menus_footer %}
+		<div id="menu_footer">
+		{% for menu in menus_footer %}
+			<div class="header_block" style="padding: 0px">
+				{% for item in menu.items %}
+					<div class="header_menu_block"><a href="{{ item.value }}">{{ item.name }}</a></div>
+				{% endfor %}
+			</div>
 		{% endfor %}
 		</div>
 	{% endif %}
@@ -94,10 +185,9 @@
 
 {% block footer %}
 	{% if footer %}
-		<div id="footer">
 		<div class="footer_block">
 		{{ footer }}
 		</div>
-		</div>
 	{% endif %}
+	</div>
 {% endblock %}

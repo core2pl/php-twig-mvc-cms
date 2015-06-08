@@ -1,0 +1,122 @@
+{% extends 'Base.html.twig' %}
+
+{% block head %}
+	<script type="text/javascript">
+		function moves(type,place,id,menu) {
+			var form = document.createElement("FORM");
+			form.method = "POST";
+			form.style.display = "none";
+			document.body.appendChild(form);
+			form.action = "/admin/edit_menu";
+			input = document.createElement("INPUT");
+			input.type = "hidden";
+			input.name = "type";
+			input.value = type;
+			form.appendChild(input);
+			input = document.createElement("INPUT");
+			input.type = "hidden";
+			input.name = "place";
+			input.value = place;
+			form.appendChild(input);
+			input = document.createElement("INPUT");
+			input.type = "hidden";
+			input.name = "id";
+			input.value = id;
+			form.appendChild(input);
+			input = document.createElement("INPUT");
+			input.type = "hidden";
+			input.name = "menu";
+			input.value = menu;
+			form.appendChild(input);
+			form.submit();
+		}
+	</script>
+{% endblock %}
+
+{% block menu_top %}
+	<div id="header">
+	{% if menus_top %}
+		<div id="menu_top">
+		{% for key,menu in menus_top %}
+			<div class="header_block" style="padding: 0px" onclick="moves('menu','top','{{ key }}');" title="{{ key }}">
+				{% for ikey,item in menu.items %}
+					<div class="header_menu_block"><a href="javascript:moves('item','top','{{ ikey }}','{{ key }}')" title="{{ key }}">{{ item.name }}</a></div>
+				{% endfor %}
+			</div>
+		{% endfor %}
+		</div>
+	{% endif %}
+	</div>
+{% endblock %}
+
+{% block menu_left %}
+	{% if menus_left %}
+		<div id="menu_left">
+		{% for key,menu in menus_left %}
+			<div class="menu_block" onclick="moves('menu','left','{{ key }}');" title="{{ key }}">
+				<div id="menu_header">
+					{{ menu.title }}
+				</div>
+				{% for ikey,item in menu.items %}
+					<a href="javascript:moves('item','left','{{ ikey }}','{{ key }}');" title="{{ key }}">{{ item.name }}</a></br>
+				{% endfor %}
+			</div>
+		{% endfor %}
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block page %}
+	{% if menus_left and menus_right %}
+		<div id="main_page" style="width: calc(69% + 3px)">
+	{% else %}
+		<div id="main_page">
+	{% endif %}
+	<div class="page_block" style="min-height: 50px;"></div>	
+	<div class="page_block" style="min-height: 50px;"></div>
+	<div class="page_block" style="min-height: 50px;"></div>
+	<div class="page_block" style="min-height: 50px;"></div>
+	<div class="page_block" style="min-height: 50px;"></div>
+	</div>
+{% endblock %}
+
+{% block menu_right %}
+	{% if menus_right %}
+		<div id="menu_right">
+		{% for key,menu in menus_right %}
+			<div class="menu_block" onclick="moves('menu','right','{{ key }}');" title="{{ key }}">
+				<div id="menu_header">
+					{{ menu.title }}
+				</div>
+				{% for ikey,item in menu.items %}
+					<a href="javascript:moves('item','right','{{ ikey }}','{{ key }}');" title="{{ key }}">{{ item.name }}</a></br>
+				{% endfor %}
+			</div>
+		{% endfor %}
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block menu_footer %}
+	<div id="footer">
+	{% if menus_footer %}
+		<div id="menu_footer">
+		{% for key,menu in menus_footer %}
+			<div class="header_block" style="padding: 0px" onclick="moves('menu','footer','{{ key }}');" title="{{ key }}">
+				{% for ikey,item in menu.items %}
+					<div class="header_menu_block"><a href="javascript:moves('item','footer','{{ ikey }}','{{ key }}');" title="{{ key }}">{{ item.name }}</a></div>
+				{% endfor %}
+			</div>
+		{% endfor %}
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block footer %}
+	{% if footer %}
+		<div class="footer_block">
+		{{ footer }}
+		</div>
+	{% endif %}
+	</div>
+{% endblock %}

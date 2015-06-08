@@ -191,7 +191,7 @@ class PDO {
 			$query->execute();
 			$fetch=$query->fetch();
 			if(!empty($fetch)) {
-				return new \Model\User($fetch['id'], $fetch['nick'], $fetch['email'], null, $fetch['last_login'], null);
+				return new \Model\User($fetch['id'], $fetch['nick'], $fetch['email'], $fetch['lvl'], $fetch['last_login'], $fetch['rank']);
 			} else {
 				return null;
 			}
@@ -202,16 +202,31 @@ class PDO {
 	
 	public function removeUser($userId) {
 		try {
-			$query = $this->dbcon->prepare("DELETE FROM ".$this->prefix."_users WHERE id = :id");
-			$query->bindValue(":id",$userId);
-			$query->execute();
-			$fetch=$query->rowCount();
-			if($fetch==1) {
-				$query = $this->dbcon->prepare("DELETE FROM ".$this->prefix."_news WHERE author = :id");
+			if($this->userExists($userId)) {
+				$query = $this->dbcon->prepare("DELETE FROM ".$this->prefix."_users WHERE id = :id");
 				$query->bindValue(":id",$userId);
 				$query->execute();
 				$fetch=$query->rowCount();
-				return  true;
+				if($fetch==1)
+					return true;
+				else
+					return false;
+			} else {
+				return false;
+			}
+		} catch(\PDOException $e) {
+			echo "Błąd: " . $e->getMessage();
+		}
+	}
+	
+	public function banUser($userId) {
+		try {
+			if($this->userExists($userId)) {
+				$query = $this->dbcon->prepare("UPDATE ".$this->prefix."_users SET rank = 4 WHERE id = :id");
+				$query->bindValue(":id",$userId);
+				$query->execute();
+				$fetch=$query->rowCount();
+				return true;
 			} else {
 				return false;
 			}
@@ -286,32 +301,26 @@ class PDO {
 	
 	function listUsers() {
 		try {
-			$query = $this->dbcon->prepare("SELECT id,nick,last_login FROM $this->prefix"."_users");
+			$query = $this->dbcon->prepare("SELECT id,nick,email,lvl,rank,last_login FROM $this->prefix"."_users");
 			$query->execute();
 			$fetch=$query->fetchAll(\PDO::FETCH_ASSOC);
-			$this->dbcon = null;
 			if(!empty($fetch)) {
 				$return = array();
 				foreach ($fetch as $user) {
-					$return[] = new \Model\User($user['id'], $user['nick'], null, null, $user['last_login'], null);
+					$return[] = new \Model\User($user['id'], $user['nick'], $user['email'], $user['lvl'], $user['last_login'], $user['rank']);
 				}
 				return $return;
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			$page = "Błąd: " . $e->getMessage();
 		}
 	}
 	
 	function change_data(\Model\User $user) {
 		try {
-			$server = MYSQL_SERVER;
-			$database = MYSQL_DATABASE;
-			$prefix = MYSQL_PREFIX;
-			$this->dbcon = new PDO("mysql:host=$server;dbname=$database", MYSQL_LOGIN, MYSQL_PASSWORD);
-			$this->dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$query = $this->dbcon->prepare("UPDATE $prefix"."_users SET nick = :newnick, email = :newemail, rank=:newrank, lvl=:newlvl WHERE id = :id");
+			$query = $this->dbcon->prepare("UPDATE $this->prefix"."_users SET nick = :newnick, email = :newemail, rank=:newrank, lvl=:newlvl WHERE id = :id");
 			$query->bindValue(":newnick",$user->getNick());
 			$query->bindValue(":newemail",$user->getEmail());
 			$query->bindValue(":newrank",$user->getRank());
@@ -319,13 +328,12 @@ class PDO {
 			$query->bindValue(":id",$user->getId());
 			$query->execute();
 			$fetch=$query->rowCount();
-			$this->dbcon = null;
 			if($fetch==1) {
 				return true;
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			echo "Błąd: " . $e->getMessage();
 		}
 	}
@@ -345,7 +353,7 @@ class PDO {
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			echo "Błąd: " . $e->getMessage();
 		}
 	}
@@ -356,7 +364,6 @@ class PDO {
 			$query->bindValue(":nick",$nick);
 			$query->execute();
 			$fetch=$query->fetch();
-			$this->dbcon = null;
 			if(!empty($fetch)) {
 				$password = $fetch['password'];
 				$salt = $fetch['salt'];
@@ -370,7 +377,7 @@ class PDO {
 			} else {
 				return 2;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			echo "Błąd: " . $e->getMessage();
 		}
 	}
@@ -391,7 +398,7 @@ class PDO {
 			} else {
 				return false;
 			}
-		} catch(PDOException $e) {
+		} catch(\PDOException $e) {
 			echo "Błąd: " . $e->getMessage();
 		}
 	}

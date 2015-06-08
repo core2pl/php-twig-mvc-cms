@@ -1,20 +1,20 @@
-   27 ./Install.php
+   45 ./Install.php
    13 ./SPLAutoLoad.php
-   30 ./Service/LoginPanel.php
+   31 ./Service/LoginPanel.php
    25 ./Service/Json.php
    34 ./Service/Router.php
-   20 ./Service/Table.php
+   29 ./Service/Table.php
    30 ./Service/Form.php
-   35 ./Service/Menus.php
-  401 ./Service/PDO.php
-    8 ./ajax.php
+   62 ./Service/Menus.php
+  408 ./Service/PDO.php
+   71 ./ajax.php
    23 ./Controller/Base.php
-  351 ./Controller/Index.php
+  528 ./Controller/Index.php
    29 ./Controller/Page/Index.php
-   76 ./Model/User.php
+  100 ./Model/User.php
     8 ./Model/Base.php
    45 ./Model/Post.php
    61 ./Model/Comment.php
-   33 ./Model/Menu.php
-   14 ./index.php
- 1263 razem
+   87 ./Model/Menu.php
+   10 ./index.php
+ 1639 razem

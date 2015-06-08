@@ -3,7 +3,7 @@
 <div class='user_email'>{{ user.email }}</div>
 {% if login_panel.user == user.nick %}
 	</br></br>
-	<form action="/user/change_data" method="POST">
+	<form action="/user/change_password" method="POST">
 		Podaj nowe hasło:
 		<input type="password" name="password"></br>
 		<input type="hidden" name="id" value="{{ user.id }}">
@@ -12,8 +12,13 @@
 {% endif %}
 {% if rank == 1 %}
 	<div style="text-align: right"> 
-	<form action="/user/remove" method="POST" onsubmit='return confirm("Czy na pewno chcesz usunąć tego użytkownika?");'>
-		<input type="hidden" name="id" value="{{ user.id }}">
+	<form action="/user/edit/{{ user.id }}" method="POST" style="display: inline">
+		<input type="submit" value="Edytuj użytkownika">
+	</form>
+	<form action="/user/ban/{{ user.id }}" method="POST" style="display: inline" onsubmit='return confirm("Czy na pewno chcesz zbanować tego użytkownika?");'>
+		<input type="submit" value="Zbanuj użytkownika">
+	</form>
+	<form action="/user/remove/{{ user.id }}" method="POST" style="display: inline" onsubmit='return confirm("Czy na pewno chcesz usunąć tego użytkownika?");'>
 		<input type="submit" value="Usuń użytkownika">
 	</form>
 	</div>
