@@ -36,7 +36,7 @@
 		<div class='comment'>
 		<div class='com_author'>Autor: <a href="/user/show/{{ comment.author }}">{{ comment.nick }}</a></div>
 		<div class='com_date'>{{ comment.date }}</div></br>
-		<div class='com_text'>{{ comment.text|raw }}
+		<div class='com_text'>{{ comment.text }}
 		{% if rank == 1 %}
 			<div class='com_footer'>
 			<form action="/comment/remove/{{ post.id }}" method="POST" onsubmit='return confirm("Czy na pewno chcesz usunąć ten komentarz?");'>
