@@ -11,7 +11,7 @@ class Base {
 	public $twig;
 	public $pdo;
 	public $json;
-	public $menu;
+	public $widgets;
 	
 	public function twig() {
 		\Twig_Autoloader::register();
@@ -19,6 +19,6 @@ class Base {
 		$this->twig = new \Twig_Environment($loader);
 		$this->pdo = new \Service\PDO();
 		$this->json = new \Service\Json();
-		$this->menu = new \Service\Menus();
+		$this->widgets = new \Service\Widgets();
 	}
 }

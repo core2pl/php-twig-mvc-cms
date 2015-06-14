@@ -39,7 +39,7 @@ class Index extends Base {
 			header("Location: /show/".$_POST['order']);
 			return;
 		}
-		echo $this->renderPage("main_page", $this->pdo->getPosts($vars['order']));
+		echo $this->renderPage("main_page", $this->pdo->getPosts($vars['order']))."jaja se robisz guwniorzuuu";
 	}
 	
 	public function easterEgg($vars) {
@@ -173,8 +173,8 @@ class Index extends Base {
 	
 	public function register($vars) {
 		if($this->args['srank']>3) return;
-		if (isset($_POST['nick']) && isset($_POST['password']) && isset($_POST['password2']) 
-				&& isset($_POST['email']) && !isset($_SESSION['id'])) {	
+		if (isset($_POST['nick']) && isset($_POST['password']) && isset($_POST['password2']) && isset($_POST['email']) && !isset($_SESSION['id'])
+				&& !empty($_POST['nick']) && !empty($_POST['password']) && !empty($_POST['password2']) && !empty($_POST['email'])) {	
 			if($_POST['password']!=$_POST['password2']) {
 				header("refresh:2;url=/register");
 				echo $this->renderPage("message", "Hasła się różnią!");
@@ -209,7 +209,10 @@ class Index extends Base {
 		if($this->args['srank']>3) return;
 		switch ($vars['action']) {
 			case "show":
-			echo $this->renderPage("user", $this->pdo->getUserData($vars['id']));
+				if($this->pdo->getUserData($vars['id']))
+					echo $this->renderPage("user", $this->pdo->getUserData($vars['id']));
+				else
+					echo $this->renderPage("message", "Nie ma takiego użytkownika!");
 			break;
 			case "remove":
 				if(isset($_SESSION['id']) && $this->args['srank'] == 1 && isset($vars['id'])) {
@@ -336,29 +339,31 @@ class Index extends Base {
 	
 	public function renderPage($type,$value) {
 		$this->json->open("config.json");
+		echo "gówno";
 		if(isset($_COOKIE['easter'])) {
 			return $this->twig->render('Index.html.twig', array(
-				"menus_top" => $this->menu->makeMenu("top", $this->args['srank']),
-				"menus_left" => $this->menu->makeMenu("left", $this->args['srank']),
-				"menus_right" => $this->menu->makeMenu("right", $this->args['srank']),
-				"menus_footer" => $this->menu->makeMenu("footer", $this->args['srank']),
-				$type => $value,
+				"widgets_top" => $this->widgets->makeWidgets("top", $this->args['srank']),
+				"widgets_left" => $this->widgets->makeWidgets("left", $this->args['srank']),
+				"widgets_right" => $this->widgets->makeWidgets("right", $this->args['srank']),
+				"widgets_footer" => $this->widgets->makeWidgets("footer", $this->args['srank']),
 				"easter" => true,
 				"background" => $this->json->get("background"),
 				"favicon" => $this->json->get("favicon"),
+				"logo" => $this->json->get("logo"),
 				"title" => $this->json->get("title"),
 				"rank" => $this->args['srank'],
 				"login_panel" => $this->login_panel->getData($this->args['sname'])
 			));
 		} else {
 			return $this->twig->render('Index.html.twig', array(
-				"menus_top" => $this->menu->makeMenu("top", $this->args['srank']),
-				"menus_left" => $this->menu->makeMenu("left", $this->args['srank']),
-				"menus_right" => $this->menu->makeMenu("right", $this->args['srank']),
-				"menus_footer" => $this->menu->makeMenu("footer", $this->args['srank']),
+				"widgets_top" => $this->widgets->makeWidgets("top", $this->args['srank']),
+				"widgets_left" => $this->widgets->makeWidgets("left", $this->args['srank']),
+				"widgets_right" => $this->widgets->makeWidgets("right", $this->args['srank']),
+				"widgets_footer" => $this->widgets->makeWidgets("footer", $this->args['srank']),
 				$type => $value,
 				"background" => $this->json->get("background"),
 				"favicon" => $this->json->get("favicon"),
+				"logo" => $this->json->get("logo"),
 				"title" => $this->json->get("title"),
 				"rank" => $this->args['srank'],
 				"login_panel" => $this->login_panel->getData($this->args['sname'])
@@ -523,34 +528,6 @@ class Index extends Base {
 							header("Location: /admin/edit_menu");
 						break;
 					}
-					/*if($_POST['type']=="menu") {
-						
-					}
-				} elseif(isset($_POST['remove'])) {
-					if($_POST['type']=="menu") {
-						$this->json->open("config.json");
-						$menus = $this->json->get("menu_".$_POST['place']);
-						if($_POST['id']<=(sizeof($menus)-1)) {
-							for($i = $_POST['id']; $i < sizeof($menus)-1; $i++) {
-								echo $menus[$i]->renderMenu(1)->name;
-								$menus[$i] = $menus[$i+1];
-							}	
-							unset($menus[sizeof($menus)-1]);
-						}
-					} else {
-						
-					}
-					$this->json->put("menu_".$_POST['place'],$menus);
-					$this->json->save();
-					header("Location: /admin/edit_menu");
-				} elseif(isset($_POST['add'])) {
-					if($_POST['add']=="create") {
-						$menu = new \Model\Menu($_POST['name'], $_POST['rank']);
-					} else {
-						$form = new \Service\Form("/admin/edit_menu", "POST");
-						$form->addInput("input", "text", "name", "Tytuł menu:");
-						$this->renderPage("form", $form);
-					}*/
 				} elseif (isset($_POST['add'])) {
 					switch ($_POST['add']) {
 						case "menu":
@@ -605,6 +582,7 @@ class Index extends Base {
 					$this->json->put("title", $_POST['title']);
 					$this->json->put("background", $_POST['background']);
 					$this->json->put("favicon", $_POST['favicon']);
+					$this->json->put("logo", $_POST['logo']);
 					$this->json->save();
 					header("Location: /admin/panel");
 				} else {
@@ -613,6 +591,7 @@ class Index extends Base {
 					$form->addInput("input", "text", "title", "Tytuł Strony:","off",$this->json->get("title"));
 					$form->addInput("input", "text", "background", "Adres do tła strony:","off",$this->json->get("background"));
 					$form->addInput("input", "text", "favicon", "Adres do ikony strony:","off",$this->json->get("favicon"));
+					$form->addInput("input", "text", "logo", "Adres do loga strony:","off",$this->json->get("logo"));
 					$form->addInput("input", "hidden", "edit", null,"off", true);
 					echo $this->renderPage("form", $form);
 				}

@@ -2,6 +2,8 @@
 
 use \Service\Json as Json;
 use \Model\Menu as Menu;
+use \Model\WidgetClock as Clock;
+
 
 class Install {
 
@@ -28,24 +30,27 @@ class Install {
 		
 		$json->put("routings", $routings);
 		
-		$menu = new Menu("Menu główne",3);
+		$menu = new Menu(3,"Menu główne");
 		$menu->addItem("Strona główna","/",3);
 		$menu->addItem("Użytkownicy","/user/list",2);
 		$menu_left[] = $menu;
-		$about = new Menu("O nas",3);
+		$about = new Menu(3,"O nas");
 		$about->addItem("Autorzy", "/info/author",3);
-		$admin_menu = new Menu("Menu Admina",1);
+		$admin_menu = new Menu(1,"Menu Admina");
 		$admin_menu->addItem("Dodaj post", "/post/add/0",1);
 		$admin_menu->addItem("Użytkownicy", "/admin/list",1);
 		$admin_menu->addItem("Edytuj menu", "/admin/edit_menu", 1);
 		$admin_menu->addItem("Zarządzanie stroną", "/admin/panel", 1);
+		$clock = new Clock(3);
 		$menu_left[] = $admin_menu;
+		$menu_right[] = $clock;
 		$menu_right[] = $about;
-		$json->put("menu_left", $menu_left);
-		$json->put("menu_right", $menu_right);
+		$json->put("widgets_left", $menu_left);
+		$json->put("widgets_right", $menu_right);
 		$json->put("title", "Witaj na stronie!");
 		$json->put("background", "/CSS/background.jpg");
 		$json->put("favicon", "");
+		$json->put("logo", "");
 		$json->save();
 	}
 }

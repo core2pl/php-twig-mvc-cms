@@ -12,16 +12,16 @@
 {% block header %}
 	<div id="header">
 	{% if login_panel.logged %}
-		<div class="header_block" style="text-align: right;"><a href="{{ login_panel.user_panel }}">{{ login_panel.user }}</a> <a href="{{ login_panel.logout }}">Wyloguj</a></div>
+		<div class="header_block" style="text-align: right;">{% if logo %}<a href="/"><center><img src="{{ logo }}"></center></a>{% endif %}<a href="{{ login_panel.user_panel }}">{{ login_panel.user }}</a> <a href="{{ login_panel.logout }}">Wyloguj</a></div>
 	{% else %}
-		<div class="header_block" style="text-align: right;"><a href="{{ login_panel.register }}">Zarejstruj się</a> <a href="{{ login_panel.login }}">Zaloguj się</a></div>
+		<div class="header_block" style="text-align: right;">{% if logo %}<a href="/"><center><img src="{{ logo }}"></center></a>{% endif %}<a href="{{ login_panel.register }}">Zarejstruj się</a> <a href="{{ login_panel.login }}">Zaloguj się</a></div>
 	{% endif %}
 {% endblock %}
 
 {% block menu_top %}
-	{% if menus_top %}
+	{% if widgets_top %}
 		<div id="menu_top">
-		{% for menu in menus_top %}
+		{% for menu in widgets_top %}
 			<div class="header_block" style="padding: 0px">
 				{% for item in menu.items %}
 					<div class="header_menu_block"><a href="{{ item.value }}">{{ item.name }}</a></div>
@@ -34,9 +34,9 @@
 {% endblock %}
 
 {% block menu_left %}
-	{% if menus_left %}
+	{% if widgets_left %}
 		<div id="menu_left">
-		{% for menu in menus_left %}
+		{% for menu in widgets_left %}
 			<div class="menu_block">
 				<div id="menu_header">
 					{{ menu.title }}
@@ -51,7 +51,7 @@
 {% endblock %}
 
 {% block page %}
-	{% if menus_left and menus_right %}
+	{% if widgets_left and widgets_right %}
 		<div id="main_page" style="width: calc(69% + 3px)">
 	{% else %}
 		<div id="main_page">
@@ -273,16 +273,20 @@
 {% endblock %}
 
 {% block menu_right %}
-	{% if menus_right %}
+	{% if widgets_right %}
 		<div id="menu_right">
-		{% for menu in menus_right %}
+		{% for widget in widgets_right %}
 			<div class="menu_block">
+			{% if widget.type == "menu" %}
 				<div id="menu_header">
-					{{ menu.title }}
+					{{ widget.title }}
 				</div>
-				{% for item in menu.items %}
+				{% for item in widget.items %}
 					<a href="{{ item.value }}">{{ item.name }}</a></br>
 				{% endfor %}
+			{% elseif widget.type == "clock" %}
+				<center><b>{{ widget.time }}</b></center>
+			{% endif %}
 			</div>
 		{% endfor %}
 		</div>
@@ -291,9 +295,9 @@
 
 {% block menu_footer %}
 	<div id="footer">
-	{% if menus_footer %}
+	{% if widgets_footer %}
 		<div id="menu_footer">
-		{% for menu in menus_footer %}
+		{% for menu in widgets_footer %}
 			<div class="header_block" style="padding: 0px">
 				{% for item in menu.items %}
 					<div class="header_menu_block"><a href="{{ item.value }}">{{ item.name }}</a></div>

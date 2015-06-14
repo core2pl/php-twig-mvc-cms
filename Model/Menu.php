@@ -1,20 +1,21 @@
 <?php
 namespace Model;
 
-use Model\Base;
+use Model\Widget;
 
-class Menu extends Base {
+class Menu extends Widget {
 
-	private $name,$items,$rank;
+	private $name,$items,$rank,$type;
 	
-	public function __construct($name,$rank) {
+	public function __construct($rank,$name) {
 		$this->name = $name;
 		$this->items = array();
 		$this->rank = $rank;
+		$this->type = "menu";
 	}
 	
-	public function renderMenu($rank) {
-		if ($rank > $this->rank) 
+	public function renderWidget($rank) {
+		if ($rank > $this->rank)
 			return;
 		$menu = (object) null;
 		foreach ($this->items as $item) {
@@ -23,6 +24,7 @@ class Menu extends Base {
 			}
 		}
 		$menu->title = $this->name;
+		$menu->type = "menu";
 		return $menu;
 	}
 	

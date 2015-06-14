@@ -193,7 +193,7 @@ class PDO {
 			if(!empty($fetch)) {
 				return new \Model\User($fetch['id'], $fetch['nick'], $fetch['email'], $fetch['lvl'], $fetch['last_login'], $fetch['rank']);
 			} else {
-				return null;
+				return false;
 			}
 		} catch(\PDOException $e) {
 			echo "Błąd: " . $e->getMessage();
@@ -207,10 +207,19 @@ class PDO {
 				$query->bindValue(":id",$userId);
 				$query->execute();
 				$fetch=$query->rowCount();
-				if($fetch==1)
+				if($fetch==1) {
+					$query = $this->dbcon->prepare("DELETE FROM ".$this->prefix."_comments WHERE author = :id");
+					$query->bindValue(":id",$userId);
+					$query->execute();
+					$fetch=$query->rowCount();
+					$query = $this->dbcon->prepare("DELETE FROM ".$this->prefix."_news WHERE author = :id");
+					$query->bindValue(":id",$userId);
+					$query->execute();
+					$fetch=$query->rowCount();
 					return true;
-				else
+				} else {
 					return false;
+				}
 			} else {
 				return false;
 			}

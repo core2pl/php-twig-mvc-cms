@@ -1,9 +1,7 @@
 <?php
 namespace Model;
 
-use Model\Base as Base;
-
-class Comment extends Base {
+class Comment {
 
 	private $id,$text,$author,$date,$post,$nick;
 	

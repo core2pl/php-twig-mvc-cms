@@ -1,9 +1,7 @@
 <?php
 namespace Model;
 
-use Model\Base as Base;
-
-class Post extends Base {
+class Post {
 	
 	private $id,$title,$text,$date,$authorid,$author;
 	

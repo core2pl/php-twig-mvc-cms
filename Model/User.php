@@ -1,9 +1,7 @@
 <?php
 namespace Model;
 
-use \Model\Base as Base;
-
-class User extends Base {
+class User {
 	
 	private $id,$nick,$email,$lvl,$last,$rank;
 	
