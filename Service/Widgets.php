@@ -24,7 +24,7 @@ class Widgets {
 				$widgets_top = array();
 				foreach ($this->widgets_top as $widget) {
 					if($widget->getRank()>=$rank) {
-						switch ($widget->type) {
+						switch ($widget->getType()) {
 							case "menu":
 								$widgets_top[] = $widget->renderWidget($rank);
 							break;
@@ -44,7 +44,7 @@ class Widgets {
 				$widgets_left = array();
 				foreach ($this->widgets_left as $widget) {
 					if($widget->getRank()>=$rank) {
-						switch ($widget->type) {
+						switch ($widget->getType()) {
 							case "menu":
 								$widgets_left[] = $widget->renderWidget($rank);
 							break;
@@ -63,15 +63,18 @@ class Widgets {
 				if(empty($this->widgets_right)) return array();
 				$widgets_right = array();
 				foreach ($this->widgets_right as $widget) {
+					echo $widget->getRank();
+					echo "1</br>";
 					if($widget->getRank()>=$rank) {
-						switch ($widget->type) {
+						switch ($widget->getType()) {
 							case "menu":
 								$widgets_right[] = $widget->renderWidget($rank);
 							break;
 							case "clock":
 								$clock = $widget->renderWidget($rank);
 								$time = new \DateTime();
-								$clock->time = $time->format($clock->format);
+								$clock->time = "gówno";
+								var_dump($clock);
 								$widgets_right[] = $clock;
 							break;
 						}
@@ -84,7 +87,7 @@ class Widgets {
 				$widgets_footer = array();
 				foreach ($this->widgets_footer as $widget) {
 					if($widget->getRank()>=$rank) {
-						switch ($widget->type) {
+						switch ($widget->getType()) {
 							case "menu":
 								$widgets_footer[] = $widget->renderWidget($rank);
 							break;

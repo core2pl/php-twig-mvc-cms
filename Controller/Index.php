@@ -39,7 +39,7 @@ class Index extends Base {
 			header("Location: /show/".$_POST['order']);
 			return;
 		}
-		echo $this->renderPage("main_page", $this->pdo->getPosts($vars['order']))."jaja se robisz guwniorzuuu";
+		echo $this->renderPage("main_page", $this->pdo->getPosts($vars['order']));
 	}
 	
 	public function easterEgg($vars) {
@@ -339,7 +339,6 @@ class Index extends Base {
 	
 	public function renderPage($type,$value) {
 		$this->json->open("config.json");
-		echo "gówno";
 		if(isset($_COOKIE['easter'])) {
 			return $this->twig->render('Index.html.twig', array(
 				"widgets_top" => $this->widgets->makeWidgets("top", $this->args['srank']),

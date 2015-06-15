@@ -14,10 +14,18 @@ class Widget {
 	}
 	
 	public function getRank() {
-		return $this->getRank();
+		return $this->rank;
 	}
 	
 	public function setRank($rank) {
 		$this->rank = $rank;
+	}
+	
+	public function getType() {
+		return $this->type;
+	}
+	
+	public function setType($type) {
+		$this->type = $type;
 	}
 }

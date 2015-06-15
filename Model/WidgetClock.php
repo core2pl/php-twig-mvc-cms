@@ -10,6 +10,7 @@ class WidgetClock extends \Model\Widget {
 	public function __construct($rank, $format="h:i:s") {
 		$this->format = $format;
 		$this->type = "clock";
+		$this->rank = $rank;
 	}
 
 	public function getFormat() {

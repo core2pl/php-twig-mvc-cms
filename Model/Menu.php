@@ -1,7 +1,7 @@
 <?php
 namespace Model;
 
-use Model\Widget;
+use Model\Widget as Widget;
 
 class Menu extends Widget {
 
