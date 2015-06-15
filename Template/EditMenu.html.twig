@@ -1,0 +1,168 @@
+<div class="page_block" style="min-height: 50px; font-size:9px;">
+{% include 'AdminMenu.html.twig' %}
+</div>
+{% if edit_menu %}
+	<div class="page_block">
+	{% if edit_menu.type == "menu" %}
+		Tytuł menu: {{ edit_menu.name }}</br>
+		Pozycja: {{ edit_menu.place }}</br>
+		Id menu: {{ edit_menu.id }}</br>
+		Ranga menu: {{ edit_menu.rank }}</br>
+		</br>
+		Zmień tytuł:
+		<form action="/admin/edit_menu" method="POST">
+		<input type="text" name="newname" autocomplete="off" value="{{ edit_menu.name }}">
+		<input type="hidden" name="edit" value="name">
+		<input type="hidden" name="id" value="{{ edit_menu.id }}">
+		<input type="hidden" name="place" value="{{ edit_menu.place }}">
+		<input type="hidden" name="type" value="{{ edit_menu.type }}">
+		<input type="hidden" name="name" value="{{ edit_menu.name }}">
+		<input type="submit" value="Wyślij">
+		</form>
+		
+		Zmień pozycję:
+		<form action="/admin/edit_menu" method="POST">
+		<input type="text" name="newplace" autocomplete="off" value="{{ edit_menu.place }}">
+		<input type="hidden" name="edit" value="place">
+		<input type="hidden" name="id" value="{{ edit_menu.id }}">
+		<input type="hidden" name="place" value="{{ edit_menu.place }}">
+		<input type="hidden" name="type" value="{{ edit_menu.type }}">
+		<input type="submit" value="Wyślij">
+		</form>
+		
+		Zmień Id:
+		<form action="/admin/edit_menu" method="POST">
+		<input type="text" name="newid" autocomplete="off" value="{{ edit_menu.id }}">
+		<input type="hidden" name="edit" value="id">
+		<input type="hidden" name="id" value="{{ edit_menu.id }}">
+		<input type="hidden" name="place" value="{{ edit_menu.place }}">
+		<input type="hidden" name="type" value="{{ edit_menu.type }}">
+		<input type="submit" value="Wyślij">
+		</form>
+		
+		Zmień rangę:
+		<form action="/admin/edit_menu" method="POST">
+		<input type="text" name="newrank" autocomplete="off" value="{{ edit_menu.rank }}">
+		<input type="hidden" name="edit" value="rank">
+		<input type="hidden" name="id" value="{{ edit_menu.id }}">
+		<input type="hidden" name="place" value="{{ edit_menu.place }}">
+		<input type="hidden" name="type" value="{{ edit_menu.type }}">
+		<input type="hidden" name="rank" value="{{ edit_menu.rank }}">
+		<input type="submit" value="Wyślij">
+		</form>
+		
+		<form action="/admin/edit_menu" method="POST">
+		<input type="submit" value="Usuń">
+		<input type="hidden" name="id" value="{{ edit_menu.id }}">
+		<input type="hidden" name="place" value="{{ edit_menu.place }}">
+		<input type="hidden" name="type" value="{{ edit_menu.type }}">
+		<input type="hidden" name="edit" value="remove">
+		</form>
+		
+		<div style="word-break: normal;">Ranga menu oznacza od jakiej rangi użytkownik może przeglądać menu:</br>
+			1 = Admin,</br>
+			2 = Użytkownik,</br>
+			3 = Gość,</br>
+			4 = Zbanowany.</br>
+		Jeżeli ustawiona jest ranga 1 to wszyscy użytkownicy mający rangę mniejszą niż 1 (czyli np. Gość) nie mogą przeglądać menu. </br>
+		Jeżeli natomiast ustawiona jest ranga 2 to menu mogą przeglądać Admin oraz Użytkownik.</br>
+		Po najechaniu myszą na menu wyświętli się jego id.</br>
+		</br>
+		Pozycja menu oznacza gdzie umieszczone jest menu. Dostępne są 4 opcje:</br>
+			top = u góry,</br>
+			left = po lewej,</br>
+			right = po prawej,</br>
+			footer = na dole.</br></br>
+			
+		</div>
+	{% elseif edit_menu.type == "item" %}
+		Nazwa elementu: {{ edit_menu.name }}</br>
+		Pozycja: {{ edit_menu.place }}</br>
+		Id menu: {{ edit_menu.menu }}</br>
+		Id elementu: {{ edit_menu.id }}</br>
+		Ranga elementu: {{ edit_menu.rank }}</br>
+		</br>
+		Zmień tytuł:
+		<form action="/admin/edit_menu" method="POST">
+		<input type="text" name="newname" autocomplete="off" value="{{ edit_menu.name }}">
+		<input type="hidden" name="edit" value="name">
+		<input type="hidden" name="id" value="{{ edit_menu.id }}">
+		<input type="hidden" name="menu" value="{{ edit_menu.menu }}">
+		<input type="hidden" name="place" value="{{ edit_menu.place }}">
+		<input type="hidden" name="type" value="{{ edit_menu.type }}">
+		<input type="hidden" name="name" value="{{ edit_menu.name }}">
+		<input type="submit" value="Wyślij">
+		</form>
+		
+		Zmień adres:
+		<form action="/admin/edit_menu" method="POST">
+		<input type="text" name="newhref" autocomplete="off" value="{{ edit_menu.href }}">
+		<input type="hidden" name="edit" value="href">
+		<input type="hidden" name="id" value="{{ edit_menu.id }}">
+		<input type="hidden" name="href" value="{{ edit_menu.href }}">
+		<input type="hidden" name="menu" value="{{ edit_menu.menu }}">
+		<input type="hidden" name="place" value="{{ edit_menu.place }}">
+		<input type="hidden" name="type" value="{{ edit_menu.type }}">
+		<input type="hidden" name="name" value="{{ edit_menu.name }}">
+		<input type="submit" value="Wyślij">
+		</form>
+		
+		Zmień Id:
+		<form action="/admin/edit_menu" method="POST">
+		<input type="text" name="newid" autocomplete="off" value="{{ edit_menu.id }}">
+		<input type="hidden" name="edit" value="id">
+		<input type="hidden" name="id" value="{{ edit_menu.id }}">
+		<input type="hidden" name="menu" value="{{ edit_menu.menu }}">
+		<input type="hidden" name="place" value="{{ edit_menu.place }}">
+		<input type="hidden" name="type" value="{{ edit_menu.type }}">
+		<input type="submit" value="Wyślij">
+		</form>
+		
+		Zmień rangę:
+		<form action="/admin/edit_menu" method="POST">
+		<input type="text" name="newrank" autocomplete="off" value="{{ edit_menu.rank }}">
+		<input type="hidden" name="edit" value="rank">
+		<input type="hidden" name="id" value="{{ edit_menu.id }}">
+		<input type="hidden" name="menu" value="{{ edit_menu.menu }}">
+		<input type="hidden" name="place" value="{{ edit_menu.place }}">
+		<input type="hidden" name="type" value="{{ edit_menu.type }}">
+		<input type="hidden" name="rank" value="{{ edit_menu.rank }}">
+		<input type="submit" value="Wyślij">
+		</form>
+		
+		<form action="/admin/edit_menu" method="POST">
+		<input type="submit" value="Usuń">
+		<input type="hidden" name="id" value="{{ edit_menu.id }}">
+		<input type="hidden" name="menu" value="{{ edit_menu.menu }}">
+		<input type="hidden" name="place" value="{{ edit_menu.place }}">
+		<input type="hidden" name="type" value="{{ edit_menu.type }}">
+		<input type="hidden" name="edit" value="remove">
+		</form>
+		
+		<div style="word-break: normal;">Aby zmienić pozycję elementu pierw musisz go usunąć z obecnego menu a następnie dodać w innym menu.</br>
+		Ranga elementu oznacza od jakiej rangi użytkownik może widzieć element:</br>
+			1 = Admin,</br>
+			2 = Użytkownik,</br>
+			3 = Gość,</br>
+			4 = Zbanowany.</br>
+		Jeżeli ustawiona jest ranga 1 to wszyscy użytkownicy mający rangę mniejszą niż 1 (czyli np. Gość) nie mogą widzieć elementu. </br>
+		Jeżeli natomiast ustawiona jest ranga 2 to element mogą widzieć Admin oraz Użytkownik.</div>
+	{% endif %}
+	</div>
+{% else %}
+	<div class="page_block">
+	Dodaj:
+	<form action="/admin/edit_menu" method="POST">
+	<select name="add">
+	<option value="menu">Menu</option>
+	<option value="item">Element Menu</option>
+	<option value="widget">Widżet</option>
+	</select>
+	<input type="submit" value="Wyślij">
+	</form></br>
+	<div style="word-break: normal;">
+	Kliknij w menu lub w element menu lub w wiget aby go edytować!
+	</div>
+	</div>
+{% endif %}
+</div>
