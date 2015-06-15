@@ -5,7 +5,7 @@ use Model\Widget as Widget;
 
 class Menu extends Widget {
 
-	private $name,$items,$rank,$type;
+	private $name,$items;
 	
 	public function __construct($rank,$name) {
 		$this->name = $name;
