@@ -128,14 +128,14 @@ define('MYSQL_PREFIX','$this->dbprefix');
 		try {
 			$dbcon = new PDO("mysql:host=$this->dbserver;dbname=$this->dbname", $this->dblogin, $this->dbpass);
 			$dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$query = $dbcon->prepare("SELECT id,nick FROM ".$this->prefix."_users WHERE nick = :nick");
+			$query = $dbcon->prepare("SELECT id,nick FROM ".$this->dbprefix."_users WHERE nick = :nick");
 			$query->bindValue(':nick', $nick);
 			$query-> execute();
 			$fetch = $query->fetch();
 			if(empty($fetch)) {
 				$salt = uniqid(mt_rand(), true);
 				$password = hash('sha256', $salt . $pass);
-				$query = $dbcon->prepare("INSERT INTO ".$this->prefix."_users VALUES ('',?,?,?,?,NOW(),?,'1')");
+				$query = $dbcon->prepare("INSERT INTO ".$this->dbprefix."_users VALUES ('',?,?,?,?,NOW(),?,'1')");
 				$return = $query->execute(array($nick, $email, $password, $salt, 2));
 				$this->loginUser($nick, $pass);
 				$dbcon = null;
@@ -155,7 +155,7 @@ define('MYSQL_PREFIX','$this->dbprefix');
 		try {
 			$dbcon = new PDO("mysql:host=$this->dbserver;dbname=$this->dbname", $this->dblogin, $this->dbpass);
 			$dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$query = $this->dbcon->prepare("INSERT INTO ".$this->prefix."_news (id, title, text, type, date, author) VALUES (NULL, :title, :text, \"post\", NOW(), :author);");
+			$query = $this->dbcon->prepare("INSERT INTO ".$this->dbprefix."_news (id, title, text, type, date, author) VALUES (NULL, :title, :text, \"post\", NOW(), :author);");
 			$query->bindValue(":title","Witaj!");
 			$query->bindValue(":text","Witaj na nowo utworzonej stronie! To jest przykładowy post. Możesz go edytować, usunąć, i dodawać swoje posty! Skonfiguruj stronę pod swoje upodobania klikając w linki po lewej!");
 			$query->bindValue(":author",0);
