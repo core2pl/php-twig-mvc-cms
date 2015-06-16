@@ -58,7 +58,7 @@ class Index extends Base {
 		switch ($vars['action']) {
 			case 'add':
 				if (isset($_POST['text']) && isset($vars['id']) && isset($_SESSION['id']) && $this->args['srank']<=2) {
-					if($this->pdo->addComment(new \Model\Comment(null, $_POST['text'], $_SESSION['id'], null, $vars['id'], null))) {
+					if($this->pdo->addComment(new \Model\Comment(null, $this->parseBBcode($_POST['text']), $_SESSION['id'], null, $vars['id'], null))) {
 						header("Location: /post/".$vars['id']);
 					} else {
 						echo $this->renderPage("message", "Wystąpił błąd!");
@@ -85,6 +85,28 @@ class Index extends Base {
 		}
 	}
 	
+	public function parseBBcode($text) {
+		$return = $text;
+		$return = str_replace(":)", "<img src='/Smileys/smile.gif' title=':)'>", $return);
+		$return = str_replace(":(", "<img src='/Smileys/sad.gif' title=':('>", $return);
+		$return = str_replace(":p", "<img src='/Smileys/tongue.gif' title=':p'>", $return);
+		$return = str_replace(":P", "<img src='/Smileys/tongue.gif' title=':P'>", $return);
+		$return = str_replace(":D", "<img src='/Smileys/lol.gif' title=':D'>", $return);
+		$return = str_replace(":d", "<img src='/Smileys/lol.gif' title=':d'>", $return);
+		$return = str_replace(":O", "<img src='/Smileys/o.gif' title=':O'>", $return);
+		$return = str_replace(":o", "<img src='/Smileys/o.gif' title=':o'>", $return);
+		$return = str_replace(":B", "<img src='/Smileys/b.gif' title=':B'>", $return);
+		$return = str_replace(":michal:", "<img src='/Smileys/program.gif' title=':michal:'>", $return);
+
+		$return = str_replace("[b]", "<b>", $return);
+		$return = str_replace("[/b]", "</b>", $return);
+		$return = str_replace("[i]", "<i>", $return);
+		$return = str_replace("[/i]", "</i>", $return);
+		$return = str_replace("[u]", "<u>", $return);
+		$return = str_replace("[/u]", "</u>", $return);
+		return $return;
+	}
+	
 	public function modifyPost($vars) {
 		if($this->args['srank']>3) return;
 		switch ($vars['action']) {
@@ -104,7 +126,7 @@ class Index extends Base {
 			break;
 			case 'add':
 				if (isset($_POST['title']) && isset($_POST['text']) && isset($_SESSION['id']) && $this->args['srank'] == 1) {
-					if($this->pdo->addPost(new \Model\Post(null, $_POST['title'], $_POST['text'], null, $_SESSION['id']))) {
+					if($this->pdo->addPost(new \Model\Post(null, $_POST['title'], $this->parseBBcode($_POST['text']), null, $_SESSION['id']))) {
 						header("Location: /");
 					} else {
 						header("refresh: 2;url=/");
@@ -231,7 +253,7 @@ class Index extends Base {
 				if(isset($_SESSION['id']) && $this->args['srank'] == 1) {
 					if($this->pdo->banUser($vars['id'])) {
 						header("refresh:2;url=/");
-						echo $this->renderPage("messsage", "Zbanowano użytkownika pomyślnie!");
+						echo $this->renderPage("message", "Zbanowano użytkownika pomyślnie!");
 					} else {
 						header("refresh:2;url=/");
 						echo $this->renderPage("message", "Wystąpił błąd!");
@@ -248,22 +270,7 @@ class Index extends Base {
 				}
 				$users = $this->pdo->listUsers();
 				$table = new \Service\Table();
-				$table->setJs('
-					function refreshList() {
-						$.ajax({
-									
-							url : "/ajax.php",
-							data: {
-								"list": true
-							},
-							type : "get",
-							success: function(data){
-								$(".page_block").html(data);
-							}
-									
-						});
-					}
-					window.setInterval("refreshList()", 30000);');
+				$table->setJs("refreshList();");
 				$table->addCell("Użytkownik", "black", null);
 				$table->addCell("Status", "black", null);
 				$table->nextRow();
@@ -275,7 +282,6 @@ class Index extends Base {
 						$table->addCell($user->getStatus(), "red", null);
 					$table->nextRow();
 				}
-				
 				echo $this->renderPage("table", $table);
 			break;
 			case "change_password":
@@ -382,7 +388,7 @@ class Index extends Base {
 				if(isset($_POST['edit'])) {
 					if($_POST['place'] == "left" || $_POST['place'] == "right" || $_POST['place'] == "top" || $_POST['place'] == "footer") {
 						$this->json->open("config.json");
-						$menus = $this->json->get("menu_".$_POST['place']);
+						$menus = $this->json->get("widgets_".$_POST['place']);
 						if(isset($_POST['id']) || isset($_POST['menu'])) {
 							$menu = $menus[$_POST['id']];
 							if($_POST['type'] == "item") $menu = $menus[$_POST['menu']];
@@ -399,56 +405,124 @@ class Index extends Base {
 					}
 					switch ($_POST['edit']) {
 						case "name":
-							if($_POST['type'] == "menu") {
-								if($_POST['newname']!=$menu->getName()) {
-									$menu->setName($_POST['newname']);
+							switch ($_POST['type']) {
+								case "menu":
+									if($_POST['newname']!=$menu->getName()) {
+										$menu->setName($_POST['newname']);
+										$menus[$_POST['id']] = $menu;
+										$this->json->put("widgets_".$_POST['place'],$menus);
+										$this->json->save();
+										header("Location: /admin/edit_menu");
+									}
+								break;
+								case "item":
+									if($_POST['newname']!=$menu->getItem($_POST['id'], "name")) {
+										$menu->modifyItem($_POST['id'],"name",$_POST['newname']);
+										$menus[$_POST['menu']] = $menu;
+										$this->json->put("widgets_".$_POST['place'],$menus);
+										$this->json->save();
+										header("Location: /admin/edit_menu");
+									}
+								break;
+							}
+						break;
+						case "color":
+							if($_POST['type'] == "clock") {
+								if($_POST['newcolor']!=$menu->getColor()) {
+									$menu->setColor($_POST['newcolor']);
 									$menus[$_POST['id']] = $menu;
-									$this->json->put("menu_".$_POST['place'],$menus);
+									$this->json->put("widgets_".$_POST['place'],$menus);
 									$this->json->save();
 									header("Location: /admin/edit_menu");
 								}
-							} else {
-								if($_POST['newname']!=$menu->getItem($_POST['id'], "name")) {
-									$menu->modifyItem($_POST['id'],"name",$_POST['newname']);
-									$menus[$_POST['menu']] = $menu;
-									$this->json->put("menu_".$_POST['place'],$menus);
+							}
+						break;
+						case "style":
+							if($_POST['type'] == "clock") {
+								if($_POST['newstyle']!=$menu->getStyle()) {
+									$menu->setStyle($_POST['newstyle']);
+									$menus[$_POST['id']] = $menu;
+									$this->json->put("widgets_".$_POST['place'],$menus);
+									$this->json->save();
+									header("Location: /admin/edit_menu");
+								}
+							}
+						break;
+						case "option":
+							if($_POST['type'] == "users") {
+								if($_POST['newoption']!=$menu->getOption()) {
+									$menu->setOption($_POST['newoption']);
+									$menus[$_POST['id']] = $menu;
+									$this->json->put("widgets_".$_POST['place'],$menus);
+									$this->json->save();
+									header("Location: /admin/edit_menu");
+								}
+							}
+						break;
+						case "link":
+							if($_POST['type'] == "users") {
+								if($_POST['newlink']!=$menu->linkedUsers()) {
+									$menu->linkUsers($_POST['newlink']);
+									$menus[$_POST['id']] = $menu;
+									$this->json->put("widgets_".$_POST['place'],$menus);
 									$this->json->save();
 									header("Location: /admin/edit_menu");
 								}
 							}
 						break;
 						case "rank":
-							if($_POST['type'] == "menu") {
-								if($_POST['newrank']!=$menu->getRank()) {
-									$menu->setRank($_POST['newrank']);
-									$menus[$_POST['id']] = $menu;
-									$this->json->put("menu_".$_POST['place'],$menus);
-									$this->json->save();
-									header("Location: /admin/edit_menu");
-								}
-							} else {
-								if($_POST['newrank']!=$menu->getItem($_POST['id'],"rank")) {
-									$menu->modifyItem($_POST['id'],"rank",$_POST['newrank']);
-									$menus[$_POST['menu']] = $menu;
-									$this->json->put("menu_".$_POST['place'],$menus);
-									$this->json->save();
-									header("Location: /admin/edit_menu");
-								}
+							switch ($_POST['type']) {
+								case "menu":
+									if($_POST['newrank']!=$menu->getRank()) {
+										$menu->setRank($_POST['newrank']);
+										$menus[$_POST['id']] = $menu;
+										$this->json->put("widgets_".$_POST['place'],$menus);
+										$this->json->save();
+										header("Location: /admin/edit_menu");
+									}
+								break;
+								case "item":
+									if($_POST['newrank']!=$menu->getItem($_POST['id'],"rank")) {
+										$menu->modifyItem($_POST['id'],"rank",$_POST['newrank']);
+										$menus[$_POST['menu']] = $menu;
+										$this->json->put("widgets_".$_POST['place'],$menus);
+										$this->json->save();
+										header("Location: /admin/edit_menu");
+									}
+								break;
+								case "clock":
+									if($_POST['newrank']!=$menu->getRank()) {
+										$menu->setRank($_POST['newrank']);
+										$menus[$_POST['id']] = $menu;
+										$this->json->put("widgets_".$_POST['place'],$menus);
+										$this->json->save();
+										header("Location: /admin/edit_menu");
+									}
+								break;
+								case "users":
+									if($_POST['newrank']!=$menu->getRank()) {
+										$menu->setRank($_POST['newrank']);
+										$menus[$_POST['id']] = $menu;
+										$this->json->put("widgets_".$_POST['place'],$menus);
+										$this->json->save();
+										header("Location: /admin/edit_menu");
+									}
+								break;
 							}
 						break;
 						case "place":
 							if($_POST['newplace']!=$_POST['place']) {
-								$menus_new = $this->json->get("menu_".$_POST['newplace']);
+								$menus_new = $this->json->get("widgets_".$_POST['newplace']);
 								$menus_new[] = $menus[$_POST['id']];
 								if($_POST['id']<=(sizeof($menus)-1)) {
 									for($i = $_POST['id']; $i < sizeof($menus)-1; $i++) {
-										echo $menus[$i]->renderMenu(1)->name;
+										echo $menus[$i]->renderWidget(1)->name;
 										$menus[$i] = $menus[$i+1];
 									}
 									unset($menus[sizeof($menus)-1]);
 								}
-								$this->json->put("menu_".$_POST['newplace'],$menus_new);
-								$this->json->put("menu_".$_POST['place'],$menus);
+								$this->json->put("widgets_".$_POST['newplace'],$menus_new);
+								$this->json->put("widgets_".$_POST['place'],$menus);
 								$this->json->save();
 								header("Location: /admin/edit_menu");
 							}
@@ -456,7 +530,7 @@ class Index extends Base {
 						case "id":
 							switch ($_POST['type']) {
 								case "menu":
-									if($_POST['new_id']!=$_POST['id']) {
+									if($_POST['newid']!=$_POST['id']) {
 										if($_POST['newid']<sizeof($menus))
 										if($_POST['newid'] > $_POST['id']) {
 											$temp = $menu;
@@ -476,8 +550,44 @@ class Index extends Base {
 								case "item":
 									$menu->moveItem($_POST['id'],$_POST['newid']);
 								break;
+								case "clock":
+									if($_POST['newid']!=$_POST['id']) {
+										if($_POST['newid']<sizeof($menus))
+										if($_POST['newid'] > $_POST['id']) {
+											$temp = $menu;
+											for($i = $_POST['id']; $i < $_POST['newid']; $i++) {
+												$menus[$i] = $menus[$i+1];
+											}
+											$menus[$_POST['newid']] = $temp;
+										} else {
+											$temp = $menu;
+											for($i = $_POST['id']; $i > $_POST['newid']; $i--) {
+												$menus[$i] = $menus[$i-1];
+											}
+											$menus[$_POST['newid']] = $temp;
+										}
+									}
+								break;
+								case "users":
+									if($_POST['newid']!=$_POST['id']) {
+										if($_POST['newid']<sizeof($menus))
+											if($_POST['newid'] > $_POST['id']) {
+												$temp = $menu;
+												for($i = $_POST['id']; $i < $_POST['newid']; $i++) {
+													$menus[$i] = $menus[$i+1];
+												}
+												$menus[$_POST['newid']] = $temp;
+											} else {
+												$temp = $menu;
+												for($i = $_POST['id']; $i > $_POST['newid']; $i--) {
+													$menus[$i] = $menus[$i-1];
+												}
+												$menus[$_POST['newid']] = $temp;
+											}
+									}
+								break;
 							}
-							$this->json->put("menu_".$_POST['place'],$menus);
+							$this->json->put("widgets_".$_POST['place'],$menus);
 							$this->json->save();
 							header("Location: /admin/edit_menu");
 						break;
@@ -486,7 +596,7 @@ class Index extends Base {
 								if($_POST['newhref']!=$menu->getItem($_POST['id'],"value")) {
 									$menu->modifyItem($_POST['id'],"value",$_POST['newhref']);
 									$menus[$_POST['menu']] = $menu;
-									$this->json->put("menu_".$_POST['place'],$menus);
+									$this->json->put("widgets_".$_POST['place'],$menus);
 									$this->json->save();
 									header("Location: /admin/edit_menu");
 								}
@@ -495,15 +605,27 @@ class Index extends Base {
 						case "add":
 							switch ($_POST['type']) {
 								case "menu":
-									$menu = new \Model\Menu($_POST['name'], $_POST['rank']);
+									$menu = new \Model\Menu($_POST['rank'], $_POST['name']);
 									$menus[] = $menu;
 								break;
 								case "item":
 									$menu->addItem($_POST['name'], $_POST['href'], $_POST['rank']);
 									$menus[$_POST['menu']] = $menu;
 								break;
+								case "clock":
+									$clock = new \Model\WidgetClock($_POST['rank']);
+									$clock->setColor($_POST['color']);
+									$clock->setStyle($_POST['style']);
+									$menus[] = $clock;
+								break;
+								case "users":
+									$users = new \Model\WidgetUsers($_POST['rank']);
+									$users->setOption($_POST['option']);
+									$users->setType($_POST['type']);
+									$menus[] = $users;
+								break;
 							}
-							$this->json->put("menu_".$_POST['place'],$menus);
+							$this->json->put("widgets_".$_POST['place'],$menus);
 							$this->json->save();
 							header("Location: /admin/edit_menu");
 						break;
@@ -512,7 +634,7 @@ class Index extends Base {
 								case "menu":
 									if($_POST['id']<=(sizeof($menus)-1)) {
 										for($i = $_POST['id']; $i < sizeof($menus)-1; $i++) {
-											echo $menus[$i]->renderMenu(1)->name;
+											echo $menus[$i]->renderWidget(1)->name;
 											$menus[$i] = $menus[$i+1];
 										}
 										unset($menus[sizeof($menus)-1]);
@@ -521,8 +643,26 @@ class Index extends Base {
 								case "item":
 									$menu->removeItem($_POST['id']);
 								break;
+								case "clock":
+									if($_POST['id']<=(sizeof($menus)-1)) {
+										for($i = $_POST['id']; $i < sizeof($menus)-1; $i++) {
+											echo $menus[$i]->renderWidget(1)->name;
+											$menus[$i] = $menus[$i+1];
+										}
+										unset($menus[sizeof($menus)-1]);
+									}
+								break;
+								case "users":
+									if($_POST['id']<=(sizeof($menus)-1)) {
+										for($i = $_POST['id']; $i < sizeof($menus)-1; $i++) {
+											echo $menus[$i]->renderWidget(1)->name;
+											$menus[$i] = $menus[$i+1];
+										}
+										unset($menus[sizeof($menus)-1]);
+									}
+								break;
 							}
-							$this->json->put("menu_".$_POST['place'],$menus);
+							$this->json->put("widgets_".$_POST['place'],$menus);
 							$this->json->save();
 							header("Location: /admin/edit_menu");
 						break;
@@ -549,28 +689,73 @@ class Index extends Base {
 							$form->addInput("input", "hidden", "type", null, "off", "item");
 							echo $this->renderPage("form", $form);
 						break;
+						case "clock":
+							$form = new \Service\Form("/admin/edit_menu", "POST");
+							$form->addInput("input", "text", "color", "Kolor zegara:","off","black");
+							$form->addInput("input", "text", "style", "Style zegara:","off","text-align: center; padding-top: 5px; padding-bottom: 5px;");
+							$form->addInput("input", "text", "rank", "Ranga zegara:","off","3");
+							$form->addInput("input", "text", "place", "Pozycja","off","left");
+							$form->addInput("input", "hidden", "edit", null, "off", "add");
+							$form->addInput("input", "hidden", "type", null, "off", "clock");
+							echo $this->renderPage("form", $form);
+						break;
+						case "users":
+							$form = new \Service\Form("/admin/edit_menu", "POST");
+							$form->addInput("input", "text", "option", "Opcja widgetu:","off","0");
+							$form->addInput("input", "text", "link", "Linkowanie użytkowników:","off","true");
+							$form->addInput("input", "text", "rank", "Ranga zegara:","off","3");
+							$form->addInput("input", "text", "place", "Pozycja","off","left");
+							$form->addInput("input", "hidden", "edit", null, "off", "add");
+							$form->addInput("input", "hidden", "type", null, "off", "users");
+							echo $this->renderPage("form", $form);
+							break;
 					}
 				} else {
-					if($_POST['type']=="menu") {
-						$this->json->open("config.json");
-						$menu = $this->json->get("menu_".$_POST['place'])[$_POST['id']];
-						$editmenu = (object)null;
-						$editmenu->type = $_POST['type'];
-						$editmenu->id = $_POST['id'];
-						$editmenu->place = $_POST['place'];
-						$editmenu->rank = $menu->getRank();
-						$editmenu->name = $menu->getName();
-					} elseif($_POST['type']=="item") {
-						$this->json->open("config.json");
-						$menu = $this->json->get("menu_".$_POST['place'])[$_POST['menu']];
-						$editmenu = (object)null;
-						$editmenu->type = $_POST['type'];
-						$editmenu->id = $_POST['id'];
-						$editmenu->href = $_POST['href'];
-						$editmenu->menu = $_POST['menu']; 
-						$editmenu->place = $_POST['place'];
-						$editmenu->rank = $menu->getItem($_POST['id'], "rank");
-						$editmenu->name = $menu->getItem($_POST['id'], "name");
+					switch ($_POST['type']) {
+						case "menu":
+							$this->json->open("config.json");
+							$menu = $this->json->get("widgets_".$_POST['place'])[$_POST['id']];
+							$editmenu = (object)null;
+							$editmenu->type = $_POST['type'];
+							$editmenu->id = $_POST['id'];
+							$editmenu->place = $_POST['place'];
+							$editmenu->rank = $menu->getRank();
+							$editmenu->name = $menu->getName();
+						break;
+						case "item":
+							$this->json->open("config.json");
+							$menu = $this->json->get("widgets_".$_POST['place'])[$_POST['menu']];
+							$editmenu = (object)null;
+							$editmenu->type = $_POST['type'];
+							$editmenu->id = $_POST['id'];
+							$editmenu->href = $_POST['href'];
+							$editmenu->menu = $_POST['menu']; 
+							$editmenu->place = $_POST['place'];
+							$editmenu->rank = $menu->getItem($_POST['id'], "rank");
+							$editmenu->name = $menu->getItem($_POST['id'], "name");
+						break;
+						case "clock":
+							$this->json->open("config.json");
+							$menu = $this->json->get("widgets_".$_POST['place'])[$_POST['id']];
+							$editmenu = (object)null;
+							$editmenu->color = $_POST['color'];
+							$editmenu->style = $_POST['style'];
+							$editmenu->type = $_POST['type'];
+							$editmenu->id = $_POST['id'];
+							$editmenu->place = $_POST['place'];
+							$editmenu->rank = $menu->getRank();
+						break;
+						case "users":
+							$this->json->open("config.json");
+							$menu = $this->json->get("widgets_".$_POST['place'])[$_POST['id']];
+							$editmenu = (object)null;
+							$editmenu->option = $_POST['option'];
+							$editmenu->link = $menu->linkedUsers();
+							$editmenu->type = $_POST['type'];
+							$editmenu->id = $_POST['id'];
+							$editmenu->place = $_POST['place'];
+							$editmenu->rank = $menu->getRank();
+						break;
 					}
 					echo $this->renderPage("edit_menu", $editmenu);
 				}
@@ -598,22 +783,7 @@ class Index extends Base {
 			case "list":
 				$users = $this->pdo->listUsers();
 				$table = new \Service\Table();
-				$table->setJs('
-					function refreshList() {
-						$.ajax({
-					
-							url : "/ajax.php",
-							data: {
-								"admin_list": true
-							},
-							type : "get",
-							success: function(data){
-								$(".page_block").html(data);
-							}
-					
-						});
-					}
-					window.setInterval("refreshList()", 30000);');
+				$table->setJs('adminList();');
 				$table->addCell("Użytkownik", "black", null);
 				$table->addCell("Ranga", "black", null);
 				$table->addCell("Status", "black", null);
@@ -639,6 +809,91 @@ class Index extends Base {
 				}
 				
 				echo $this->renderPage("table", $table);
+			break;
+		}
+	}
+	
+	public function ajax($vars) {
+		switch($vars['action']) {
+			case "list":
+				if($this->args['srank']>2) {
+					header("refresh:2;url=/");
+					echo $this->renderPage("message", "Nie masz uprawnień do przeglądania tej strony!");
+					return;
+				}
+				$users = $this->pdo->listUsers();
+				$table = new \Service\Table();
+				$table->setJs("refreshList();");
+				$table->addCell("Użytkownik", "black", null);
+				$table->addCell("Status", "black", null);
+				$table->nextRow();
+				foreach ($users as $user) {
+					$table->addCell($user->getNick(),"black","/user/show/".$user->getId());
+					if($user->getStatus()=="Online")
+						$table->addCell($user->getStatus(), "green", null);
+					else
+						$table->addCell($user->getStatus(), "red", null);
+					$table->nextRow();
+				}
+				echo $this->twig->render("Table.html.twig", array(
+					"table" => $table
+				));
+			break;
+			case "listAdmin":
+				if($this->args['srank']>3) return;
+				if($this->args['srank']>1) {
+					header("refresh:2;url=/");
+					echo $this->renderPage("message", "Nie masz uprawnień do przeglądania tej strony!");
+					return;
+				}
+				$users = $this->pdo->listUsers();
+				$table = new \Service\Table();
+				$table->setJs('adminList();');
+				$table->addCell("Użytkownik", "black", null);
+				$table->addCell("Ranga", "black", null);
+				$table->addCell("Status", "black", null);
+				$table->nextRow();
+				foreach ($users as $user) {
+					$table->addCell($user->getNick(),"black","/user/show/".$user->getId());
+					switch ($user->getRank()) {
+						case 1:
+							$table->addCell("Admin", "red", null);
+						break;
+						case 2:
+							$table->addCell("Użytkownik", "green", null);
+						break;
+						case 4:
+							$table->addCell("Zbanowany", "black", null);
+						break;
+					}
+					if($user->getStatus()=="Online")
+						$table->addCell($user->getStatus(), "green", null);
+					else
+						$table->addCell($user->getStatus(), "red", null);
+					$table->nextRow();
+				}
+				
+				echo $this->twig->render("Table.html.twig", array(
+					"table" => $table
+				));
+			break;
+			case "refresh":
+				if(isset($_SESSION['id']))
+				$this->pdo->setLastLogin($_SESSION['id']);
+			break;
+		}
+	}
+	
+	public function info($vars) {
+		switch ($vars['action']) {
+			case "about":
+				$this->renderPage("message", "Ta strona jest CMS'em. CMS czyli system zarządzania treścią (ang. Content Management System, CMS) – oprogramowanie pozwalające na łatwe utworzenie serwisu WWW oraz jego późniejszą aktualizację i rozbudowę przez redakcyjny personel nietechniczny. Kształtowanie treści i sposobu ich prezentacji w serwisie internetowym zarządzanym przez CMS odbywa się za pomocą prostych w obsłudze interfejsów użytkownika, zazwyczaj w postaci stron WWW zawierających rozbudowane formularze i moduły.</br></br>".
+				"Jest on zbudowany w oaprciu o:</br>".
+				"MVC,PDO,TWIG,Jquery,Ajax,JavaScript,CSS.</br></br>".
+				"Strona ta równierz posiada router. Router jest to proces przetwarzania otrzymanego adresu żądania i na jego podstawie decydowanie, co powinno zostać uruchomione i/lub wyświetlone.");
+			break;
+			case "author":
+				$this->renderPage("message", "Autorem strony jest Michał Szczepaniak. Kod jest pisany od 0 (z wyjątkiem bibliotek).");
 			break;
 		}
 	}

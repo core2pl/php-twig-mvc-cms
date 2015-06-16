@@ -27,6 +27,8 @@ class Install {
 		$routings['user'] = '/user/{action}/{id}';
 		$routings['admin'] = '/admin/{action}';
 		$routings['easterEgg'] = '/easter';
+		$routings['ajax'] = '/ajax/{action}';
+		$routings['info'] = '/info/{action}';
 		
 		$json->put("routings", $routings);
 		

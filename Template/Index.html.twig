@@ -2,7 +2,9 @@
 
 {% block head %}
 	{{ parent() }}
-	<link rel="stylesheet" type="text/css" href="/CSS/style.css" />
+	<link rel="stylesheet" type="text/css" href="/CSS/style.css">
+	<script type="text/javascript" src="/Js/Widgets.js">
+	</script>
 {% endblock %}
 
 {% block title %}
@@ -21,11 +23,39 @@
 {% block menu_top %}
 	{% if widgets_top %}
 		<div id="menu_top">
-		{% for menu in widgets_top %}
+		{% for widget in widgets_top %}
 			<div class="header_block" style="padding: 0px">
-				{% for item in menu.items %}
+			{% if widget.type == "menu" %}
+				{% for item in widget.items %}
 					<div class="header_menu_block"><a href="{{ item.value }}">{{ item.name }}</a></div>
 				{% endfor %}
+			{% elseif widget.type == "clock" %}
+				<div class="clock" style="color: {{ widget.color }}; {{ widget.style }}"></div>
+			{% elseif widget.type == "users" %}
+				<div class="users" style="padding: 5px;">
+				{% if widget.option == 0 %}
+					Liczba użytkowników online: {{ widget.count }} Użytkownicy Online: 
+					{% for user in widget.users %}
+						{% if widget.link %}
+							<a href="/user/show/{{ user.id }}">{{ user.nick }}</a>, 
+						{% else %}
+							{{ user.nick }},
+						{% endif %}
+					{% endfor %}
+				{% elseif widget.option == 1 %}
+					Liczba użytkowników online: {{ widget.count }}
+				{% elseif widget.option == 2 %}
+					Użytkownicy Online: 
+					{% for user in widget.users %}
+						{% if widget.link %}
+							<a href="/user/show/{{ user.id }}">{{ user.nick }}</a>, 
+						{% else %}
+							{{ user.nick }},
+						{% endif %}
+					{% endfor %}
+				{% endif %}
+				</div>
+			{% endif %}
 			</div>
 		{% endfor %}
 		</div>
@@ -36,14 +66,42 @@
 {% block menu_left %}
 	{% if widgets_left %}
 		<div id="menu_left">
-		{% for menu in widgets_left %}
+		{% for widget in widgets_left %}
 			<div class="menu_block">
+			{% if widget.type == "menu" %}
 				<div id="menu_header">
-					{{ menu.title }}
+					{{ widget.title }}
 				</div>
-				{% for item in menu.items %}
+				{% for item in widget.items %}
 					<a href="{{ item.value }}">{{ item.name }}</a></br>
 				{% endfor %}
+			{% elseif widget.type == "clock" %}
+				<div class="clock" style="color: {{ widget.color }}; {{ widget.style }}"></div>
+			{% elseif widget.type == "users" %}
+				<div class="users">
+				{% if widget.option == 0 %}
+					Liczba użytkowników online: {{ widget.count }} Użytkownicy Online: 
+					{% for user in widget.users %}
+						{% if widget.link %}
+							<a href="/user/show/{{ user.id }}">{{ user.nick }}</a>, 
+						{% else %}
+							{{ user.nick }},
+						{% endif %}
+					{% endfor %}
+				{% elseif widget.option == 1 %}
+					Liczba użytkowników online: {{ widget.count }}
+				{% elseif widget.option == 2 %}
+					Użytkownicy Online: 
+					{% for user in widget.users %}
+						{% if widget.link == 1 %}
+							<a href="/user/show/{{ user.id }}">{{ user.nick }}</a>, 
+						{% else %}
+							{{ user.nick }},
+						{% endif %}
+					{% endfor %}
+				{% endif %}
+				</div>
+			{% endif %}
 			</div>
 		{% endfor %}
 		</div>
@@ -52,9 +110,11 @@
 
 {% block page %}
 	{% if widgets_left and widgets_right %}
-		<div id="main_page" style="width: calc(69% + 3px)">
-	{% else %}
+		<div id="main_page" style="width: 900px">
+	{% elseif (widgets_left or widgets_right) %}
 		<div id="main_page">
+	{% else %}
+		<div id="main_page" style="width: 1200px">
 	{% endif %}
 	{% if message is defined %}
 		<div class="page_block" style="min-height: 50px;">
@@ -95,179 +155,12 @@
 	{% elseif user is defined %}
 		{% include 'User.html.twig' %}
 	{% elseif table is defined %}
+		<script type="text/javascript">{{ table.js }}</script>
 		<div class="page_block">
-		<script>{{ table.js|raw }}</script>
 		{% include 'Table.html.twig' %}
 		</div>
 	{% elseif edit_menu is defined %}
-		<div class="page_block" style="min-height: 50px; font-size:9px;">
-		{% include 'AdminMenu.html.twig' %}
-		</div>
-		{% if edit_menu %}
-			<div class="page_block">
-			{% if edit_menu.type == "menu" %}
-				Tytuł menu: {{ edit_menu.name }}</br>
-				Pozycja: {{ edit_menu.place }}</br>
-				Id menu: {{ edit_menu.id }}</br>
-				Ranga menu: {{ edit_menu.rank }}</br>
-				</br>
-				Zmień tytuł:
-				<form action="/admin/edit_menu" method="POST">
-				<input type="text" name="newname" autocomplete="off" value="{{ edit_menu.name }}">
-				<input type="hidden" name="edit" value="name">
-				<input type="hidden" name="id" value="{{ edit_menu.id }}">
-				<input type="hidden" name="place" value="{{ edit_menu.place }}">
-				<input type="hidden" name="type" value="{{ edit_menu.type }}">
-				<input type="hidden" name="name" value="{{ edit_menu.name }}">
-				<input type="submit" value="Wyślij">
-				</form>
-				
-				Zmień pozycję:
-				<form action="/admin/edit_menu" method="POST">
-				<input type="text" name="newplace" autocomplete="off" value="{{ edit_menu.place }}">
-				<input type="hidden" name="edit" value="place">
-				<input type="hidden" name="id" value="{{ edit_menu.id }}">
-				<input type="hidden" name="place" value="{{ edit_menu.place }}">
-				<input type="hidden" name="type" value="{{ edit_menu.type }}">
-				<input type="submit" value="Wyślij">
-				</form>
-				
-				Zmień Id:
-				<form action="/admin/edit_menu" method="POST">
-				<input type="text" name="newid" autocomplete="off" value="{{ edit_menu.id }}">
-				<input type="hidden" name="edit" value="id">
-				<input type="hidden" name="id" value="{{ edit_menu.id }}">
-				<input type="hidden" name="place" value="{{ edit_menu.place }}">
-				<input type="hidden" name="type" value="{{ edit_menu.type }}">
-				<input type="submit" value="Wyślij">
-				</form>
-				
-				Zmień rangę:
-				<form action="/admin/edit_menu" method="POST">
-				<input type="text" name="newrank" autocomplete="off" value="{{ edit_menu.rank }}">
-				<input type="hidden" name="edit" value="rank">
-				<input type="hidden" name="id" value="{{ edit_menu.id }}">
-				<input type="hidden" name="place" value="{{ edit_menu.place }}">
-				<input type="hidden" name="type" value="{{ edit_menu.type }}">
-				<input type="hidden" name="rank" value="{{ edit_menu.rank }}">
-				<input type="submit" value="Wyślij">
-				</form>
-				
-				<form action="/admin/edit_menu" method="POST">
-				<input type="submit" value="Usuń">
-				<input type="hidden" name="id" value="{{ edit_menu.id }}">
-				<input type="hidden" name="place" value="{{ edit_menu.place }}">
-				<input type="hidden" name="type" value="{{ edit_menu.type }}">
-				<input type="hidden" name="edit" value="remove">
-				</form>
-				
-				<div style="word-break: normal;">Ranga menu oznacza od jakiej rangi użytkownik może przeglądać menu:</br>
-					1 = Admin,</br>
-					2 = Użytkownik,</br>
-					3 = Gość,</br>
-					4 = Zbanowany.</br>
-				Jeżeli ustawiona jest ranga 1 to wszyscy użytkownicy mający rangę mniejszą niż 1 (czyli np. Gość) nie mogą przeglądać menu. </br>
-				Jeżeli natomiast ustawiona jest ranga 2 to menu mogą przeglądać Admin oraz Użytkownik.</br>
-				Po najechaniu myszą na menu wyświętli się jego id.</br>
-				</br>
-				Pozycja menu oznacza gdzie umieszczone jest menu. Dostępne są 4 opcje:</br>
-					top = u góry,</br>
-					left = po lewej,</br>
-					right = po prawej,</br>
-					footer = na dole.</br></br>
-					
-				</div>
-			{% elseif edit_menu.type == "item" %}
-				Nazwa elementu: {{ edit_menu.name }}</br>
-				Pozycja: {{ edit_menu.place }}</br>
-				Id menu: {{ edit_menu.menu }}</br>
-				Id elementu: {{ edit_menu.id }}</br>
-				Ranga elementu: {{ edit_menu.rank }}</br>
-				</br>
-				Zmień tytuł:
-				<form action="/admin/edit_menu" method="POST">
-				<input type="text" name="newname" autocomplete="off" value="{{ edit_menu.name }}">
-				<input type="hidden" name="edit" value="name">
-				<input type="hidden" name="id" value="{{ edit_menu.id }}">
-				<input type="hidden" name="menu" value="{{ edit_menu.menu }}">
-				<input type="hidden" name="place" value="{{ edit_menu.place }}">
-				<input type="hidden" name="type" value="{{ edit_menu.type }}">
-				<input type="hidden" name="name" value="{{ edit_menu.name }}">
-				<input type="submit" value="Wyślij">
-				</form>
-				
-				Zmień adres:
-				<form action="/admin/edit_menu" method="POST">
-				<input type="text" name="newhref" autocomplete="off" value="{{ edit_menu.href }}">
-				<input type="hidden" name="edit" value="href">
-				<input type="hidden" name="id" value="{{ edit_menu.id }}">
-				<input type="hidden" name="href" value="{{ edit_menu.href }}">
-				<input type="hidden" name="menu" value="{{ edit_menu.menu }}">
-				<input type="hidden" name="place" value="{{ edit_menu.place }}">
-				<input type="hidden" name="type" value="{{ edit_menu.type }}">
-				<input type="hidden" name="name" value="{{ edit_menu.name }}">
-				<input type="submit" value="Wyślij">
-				</form>
-				
-				Zmień Id:
-				<form action="/admin/edit_menu" method="POST">
-				<input type="text" name="newid" autocomplete="off" value="{{ edit_menu.id }}">
-				<input type="hidden" name="edit" value="id">
-				<input type="hidden" name="id" value="{{ edit_menu.id }}">
-				<input type="hidden" name="menu" value="{{ edit_menu.menu }}">
-				<input type="hidden" name="place" value="{{ edit_menu.place }}">
-				<input type="hidden" name="type" value="{{ edit_menu.type }}">
-				<input type="submit" value="Wyślij">
-				</form>
-				
-				Zmień rangę:
-				<form action="/admin/edit_menu" method="POST">
-				<input type="text" name="newrank" autocomplete="off" value="{{ edit_menu.rank }}">
-				<input type="hidden" name="edit" value="rank">
-				<input type="hidden" name="id" value="{{ edit_menu.id }}">
-				<input type="hidden" name="menu" value="{{ edit_menu.menu }}">
-				<input type="hidden" name="place" value="{{ edit_menu.place }}">
-				<input type="hidden" name="type" value="{{ edit_menu.type }}">
-				<input type="hidden" name="rank" value="{{ edit_menu.rank }}">
-				<input type="submit" value="Wyślij">
-				</form>
-				
-				<form action="/admin/edit_menu" method="POST">
-				<input type="submit" value="Usuń">
-				<input type="hidden" name="id" value="{{ edit_menu.id }}">
-				<input type="hidden" name="menu" value="{{ edit_menu.menu }}">
-				<input type="hidden" name="place" value="{{ edit_menu.place }}">
-				<input type="hidden" name="type" value="{{ edit_menu.type }}">
-				<input type="hidden" name="edit" value="remove">
-				</form>
-				
-				<div style="word-break: normal;">Aby zmienić pozycję elementu pierw musisz go usunąć z obecnego menu a następnie dodać w innym menu.</br>
-				Ranga elementu oznacza od jakiej rangi użytkownik może widzieć element:</br>
-					1 = Admin,</br>
-					2 = Użytkownik,</br>
-					3 = Gość,</br>
-					4 = Zbanowany.</br>
-				Jeżeli ustawiona jest ranga 1 to wszyscy użytkownicy mający rangę mniejszą niż 1 (czyli np. Gość) nie mogą widzieć elementu. </br>
-				Jeżeli natomiast ustawiona jest ranga 2 to element mogą widzieć Admin oraz Użytkownik.</div>
-			{% endif %}
-			</div>
-		{% else %}
-			<div class="page_block">
-			Dodaj:
-			<form action="/admin/edit_menu" method="POST">
-			<select name="add">
-			<option value="menu">Menu</option>
-			<option value="item">Element Menu</option>
-			<option value="widget">Widżet</option>
-			</select>
-			<input type="submit" value="Wyślij">
-			</form></br>
-			<div style="word-break: normal;">
-			Kliknij w menu lub w element menu lub w wiget aby go edytować!
-			</div>
-			</div>
-		{% endif %}
-		</div>
+		{% include 'EditMenu.html.twig' %}
 	{% endif %}
 	</div>
 {% endblock %}
@@ -285,7 +178,31 @@
 					<a href="{{ item.value }}">{{ item.name }}</a></br>
 				{% endfor %}
 			{% elseif widget.type == "clock" %}
-				<center><b>{{ widget.time }}</b></center>
+				<div class="clock" style="color: {{ widget.color }}; {{ widget.style }}"></div>
+			{% elseif widget.type == "users" %}
+				<div class="users">
+				{% if widget.option == 0 %}
+					Liczba użytkowników online: {{ widget.count }} Użytkownicy Online: 
+					{% for user in widget.users %}
+						{% if widget.link %}
+							<a href="/user/show/{{ user.id }}">{{ user.nick }}</a>, 
+						{% else %}
+							{{ user.nick }},
+						{% endif %}
+					{% endfor %}
+				{% elseif widget.option == 1 %}
+					Liczba użytkowników online: {{ widget.count }}
+				{% elseif widget.option == 2 %}
+					Użytkownicy Online: 
+					{% for user in widget.users %}
+						{% if widget.link %}
+							<a href="/user/show/{{ user.id }}">{{ user.nick }}</a>, 
+						{% else %}
+							{{ user.nick }},
+						{% endif %} 
+					{% endfor %}
+				{% endif %}
+				</div>
 			{% endif %}
 			</div>
 		{% endfor %}
@@ -297,11 +214,39 @@
 	<div id="footer">
 	{% if widgets_footer %}
 		<div id="menu_footer">
-		{% for menu in widgets_footer %}
+		{% for widget in widgets_footer %}
 			<div class="header_block" style="padding: 0px">
-				{% for item in menu.items %}
+			{% if widget.type == "menu" %}
+				{% for item in widget.items %}
 					<div class="header_menu_block"><a href="{{ item.value }}">{{ item.name }}</a></div>
 				{% endfor %}
+			{% elseif widget.type == "clock" %}
+				<div class="clock" style="color: {{ widget.color }}; {{ widget.style }}"></div>
+			{% elseif widget.type == "users" %}
+				<div class="users" style="padding: 5px;">
+				{% if widget.option == 0 %}
+					Liczba użytkowników online: {{ widget.count }} Użytkownicy Online: 
+					{% for user in widget.users %}
+						{% if widget.link %}
+							<a href="/user/show/{{ user.id }}">{{ user.nick }}</a>, 
+						{% else %}
+							{{ user.nick }},
+						{% endif %} 
+					{% endfor %}
+				{% elseif widget.option == 1 %}
+					Liczba użytkowników online: {{ widget.count }}
+				{% elseif widget.option == 2 %}
+					Użytkownicy Online: 
+					{% for user in widget.users %}
+						{% if widget.link %}
+							<a href="/user/show/{{ user.id }}">{{ user.nick }}</a>, 
+						{% else %}
+							{{ user.nick }},
+						{% endif %}
+					{% endfor %}
+				{% endif %}
+				</div>
+			{% endif %}
 			</div>
 		{% endfor %}
 		</div>

@@ -1,16 +1,17 @@
 <?php
 namespace Model;
 
-use \Model\Widget;
+use Model\Widget as Widget;
 
-class WidgetClock extends \Model\Widget {
+class WidgetClock extends Widget {
 
-	private $format;
+	private $color,$style;
 	
-	public function __construct($rank, $format="h:i:s") {
-		$this->format = $format;
-		$this->type = "clock";
-		$this->rank = $rank;
+	public function __construct($rank,$color="black",$style="") {
+		parent::__construct($rank);
+		$this->setType("clock");
+		$this->color = $color;
+		$this->style = $style;
 	}
 
 	public function getFormat() {
@@ -19,5 +20,21 @@ class WidgetClock extends \Model\Widget {
 	
 	public function setFormat($format) {
 		$this->format = $format;
+	}
+	
+	public function getColor() {
+		return $this->color;
+	}
+	
+	public function setColor($color) {
+		$this->color = $color;
+	}
+	
+	public function getStyle() {
+		return $this->style;
+	}
+	
+	public function setStyle($style) {
+		$this->style = $style;
 	}
 }

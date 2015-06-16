@@ -24,6 +24,7 @@
 		}
 		return true;
 	}</script>
+	W komentarzach jest obsługa BBCode ([b],[i],[u]) oraz emotikon.</br>
 	Treść:</br>
 	<center><form name="create_com" action="/comment/add/{{ post.id }}" method="POST" onsubmit="return check()">
 	<textarea class="com_text_edit" name="text" ></textarea></br>
@@ -36,7 +37,7 @@
 		<div class='comment'>
 		<div class='com_author'>Autor: <a href="/user/show/{{ comment.author }}">{{ comment.nick }}</a></div>
 		<div class='com_date'>{{ comment.date }}</div></br>
-		<div class='com_text'>{{ comment.text }}
+		<div class='com_text'>{{ comment.text|raw }}</div>
 		{% if rank == 1 %}
 			<div class='com_footer'>
 			<form action="/comment/remove/{{ post.id }}" method="POST" onsubmit='return confirm("Czy na pewno chcesz usunąć ten komentarz?");'>
@@ -47,8 +48,8 @@
 		{% endif %}
 		</div>
 	{% endfor %}
+	</div>
 	{% else %}
 		Brak komentarzy!
 	{% endif %}
-	</div>
 </div>

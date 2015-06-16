@@ -5,17 +5,17 @@ use Model\Widget as Widget;
 
 class Menu extends Widget {
 
-	private $name,$items,$rank,$type;
+	private $name,$items;
 	
 	public function __construct($rank,$name) {
+		parent::__construct($rank);
 		$this->name = $name;
 		$this->items = array();
-		$this->rank = $rank;
-		$this->type = "menu";
+		$this->setType("menu");
 	}
 	
 	public function renderWidget($rank) {
-		if ($rank > $this->rank)
+		if ($rank > $this->getRank())
 			return;
 		$menu = (object) null;
 		foreach ($this->items as $item) {
@@ -79,15 +79,6 @@ class Menu extends Widget {
 		foreach ($items as $item) {
 			$this->items[] = $item;
 		}
-	}
-	
-	public function getRank() {
-		return $this->rank;
-	}
-	
-	public function setRank($rank) {
-		$this->rank = $rank;
-		return $this;
 	}
 	
 	public function getName() {

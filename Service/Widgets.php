@@ -29,10 +29,10 @@ class Widgets {
 								$widgets_top[] = $widget->renderWidget($rank);
 							break;
 							case "clock":
-								$clock = $widget->renderWidget($rank);
-								$time = new \DateTime();
-								$clock->time = $time->format($clock->format);
-								$widgets_top[] = $clock;
+								$widgets_top[] = $widget->renderWidget($rank);
+							break;
+							case "users":
+								$widgets_top[] = $this->renderUsersWidget($widget->renderWidget($rank));
 							break;
 						}
 					}
@@ -49,10 +49,10 @@ class Widgets {
 								$widgets_left[] = $widget->renderWidget($rank);
 							break;
 							case "clock":
-								$clock = $widget->renderWidget($rank);
-								$time = new \DateTime();
-								$clock->time = $time->format($clock->format);
-								$widgets_left[] = $clock;
+								$widgets_left[] = $widget->renderWidget($rank);
+							break;
+							case "users":
+								$widgets_left[] = $this->renderUsersWidget($widget->renderWidget($rank));
 							break;
 						}
 					}
@@ -63,19 +63,16 @@ class Widgets {
 				if(empty($this->widgets_right)) return array();
 				$widgets_right = array();
 				foreach ($this->widgets_right as $widget) {
-					echo $widget->getRank();
-					echo "1</br>";
 					if($widget->getRank()>=$rank) {
 						switch ($widget->getType()) {
 							case "menu":
 								$widgets_right[] = $widget->renderWidget($rank);
 							break;
 							case "clock":
-								$clock = $widget->renderWidget($rank);
-								$time = new \DateTime();
-								$clock->time = "gówno";
-								var_dump($clock);
-								$widgets_right[] = $clock;
+								$widgets_right[] = $widget->renderWidget($rank);
+							break;
+							case "users":
+								$widgets_right[] = $this->renderUsersWidget($widget->renderWidget($rank));
 							break;
 						}
 					}
@@ -92,10 +89,10 @@ class Widgets {
 								$widgets_footer[] = $widget->renderWidget($rank);
 							break;
 							case "clock":
-								$clock = $widget->renderWidget($rank);
-								$time = new \DateTime();
-								$clock->time = $time->format($clock->format);
-								$widgets_footer[] = $clock;
+								$widgets_footer[] = $widget->renderWidget($rank);
+							break;
+							case "users":
+								$widgets_footer[] = $this->renderUsersWidget($widget->renderWidget($rank));
 							break;
 						}
 					}
@@ -103,5 +100,26 @@ class Widgets {
 				return $widgets_footer;
 			break;
 		}
+	}
+	
+	private function renderUsersWidget(\Model\WidgetUsers $widget) {
+		$render = $widget;
+		$pdo = new \Service\PDO();
+		$userslist = $pdo->listUsers();
+		$count = 0;
+		$users = array();
+		foreach ($userslist as $user) {
+			if($user->getStatus()=="Online") {
+				$users[] = array(
+						'nick' => $user->getNick(),
+						'id' => $user->getId()
+				);
+				$count++;
+			}
+		}
+		$render->count = $count;
+		$render->users = $users;
+		$render->link = $render->linkedUsers();
+		return $render;
 	}
 }
