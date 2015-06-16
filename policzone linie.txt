@@ -1,20 +1,36 @@
-   45 ./Install.php
+   57 ./Install.php
    13 ./SPLAutoLoad.php
    31 ./Service/LoginPanel.php
    25 ./Service/Json.php
    34 ./Service/Router.php
    29 ./Service/Table.php
-   30 ./Service/Form.php
-   62 ./Service/Menus.php
-  408 ./Service/PDO.php
+   31 ./Service/Form.php
+  124 ./Service/Widgets.php
+  417 ./Service/PDO.php
    71 ./ajax.php
    23 ./Controller/Base.php
-  528 ./Controller/Index.php
+  899 ./Controller/Index.php
    29 ./Controller/Page/Index.php
-  100 ./Model/User.php
-    8 ./Model/Base.php
-   45 ./Model/Post.php
-   61 ./Model/Comment.php
-   87 ./Model/Menu.php
+   98 ./Model/User.php
+   43 ./Model/Post.php
+   36 ./Model/WidgetUsers.php
+   39 ./Model/WidgetClock.php
+   30 ./Model/Widget.php
+   59 ./Model/Comment.php
+   92 ./Model/Menu.php
    10 ./index.php
- 1639 razem
+ 2190 razem
+  100 ./Js/EditMenu.js
+    4 ./Js/jquery-1.11.2.min.js
+   55 ./Js/Widgets.js
+  159 razem
+216 ./CSS/style.css
+   40 ./Template/Base.html.twig
+  221 ./Template/AdminMenu.html.twig
+   54 ./Template/Post.html.twig
+   16 ./Template/Table.html.twig
+   20 ./Template/Form.html.twig
+  262 ./Template/Index.html.twig
+  342 ./Template/EditMenu.html.twig
+   25 ./Template/User.html.twig
+  980 razem
